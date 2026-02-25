@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ImpSci Navigator</title>
+    <title>ImpSci Navigator: Advanced Assessment</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script>
@@ -76,6 +77,11 @@
             transform: rotate(90deg);
             white-space: nowrap;
             display: block;
+        }
+        .vertical-text { 
+            transform: rotate(-90deg); 
+            white-space: nowrap; 
+            display: block; 
         }
 
         @media print {
@@ -156,7 +162,7 @@
                     <input type="text" x-model="strategyModal.dose" placeholder="e.g., Weekly pre-launch, 30 mins" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:border-brand-500">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Justification (Mechanism)</label>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Justification</label>
                     <input type="text" x-model="strategyModal.justification" placeholder="Addresses workflow mismatch" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:border-brand-500">
                 </div>
             </div>
@@ -196,7 +202,7 @@
             <button @click="resetData()" class="p-2.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Reset Session">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
             </button>
-            <button @click="window.print()" class="ml-2 px-5 py-2.5 bg-slate-900 text-white rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-slate-800 transition-all shadow-md active:scale-95 flex items-center gap-2">
+            <button @click="exportIRLM()" class="ml-2 px-5 py-2.5 bg-slate-900 text-white rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-slate-800 transition-all shadow-md active:scale-95 flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 Export IRLM
             </button>
@@ -342,11 +348,12 @@
             </div>
         </aside>
 
-        <!-- CENTER: VISUAL WORKSPACE (D3 MATRIX) -->
-        <main class="flex-1 relative bg-slate-100 no-print flex flex-col min-w-0 overflow-hidden shadow-inner">
-            <div class="p-4 sm:p-6 lg:p-8 h-full flex flex-col relative z-10 w-full">
-                <div class="flex-1 bg-white rounded-2xl shadow-glass border border-slate-200 overflow-hidden relative flex flex-col matrix-bg">
-                    
+        <!-- CENTER: VISUAL WORKSPACE (D3 MATRIX & IRLM) -->
+        <main class="flex-1 relative bg-slate-100 no-print overflow-y-auto custom-scroll shadow-inner">
+            <div class="p-4 sm:p-6 lg:p-8 flex flex-col gap-8 relative z-10 w-full min-w-max">
+                
+                <!-- ORIGINAL MATRIX WRAPPER -->
+                <div class="h-[600px] shrink-0 bg-white rounded-2xl shadow-glass border border-slate-200 overflow-hidden relative flex flex-col matrix-bg">
                     <div class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center glass-panel z-10 gap-4 shrink-0">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white">
@@ -364,14 +371,6 @@
                     </div>
                     
                     <div class="flex-1 relative overflow-hidden flex flex-col">
-                        <!-- Explicit Empty State Overlay for Matrix -->
-                        <div x-show="items.length === 0" class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none" x-cloak>
-                            <div class="bg-white/80 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-sm border border-slate-200 text-center">
-                                <p class="text-sm font-bold text-slate-600">Workspace is empty</p>
-                                <p class="text-xs text-slate-500 mt-1">Map determinants on the left to populate the matrix.</p>
-                            </div>
-                        </div>
-
                         <div class="absolute inset-0 pointer-events-none z-0">
                             <!-- Y-Axis -->
                             <div class="absolute left-6 top-1/2 -translate-y-1/2 -rotate-90 transform origin-left text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 whitespace-nowrap flex items-center gap-2">
@@ -396,6 +395,105 @@
                         <div id="matrix" class="absolute inset-0 z-10 matrix-container"></div>
                     </div>
                     <div id="matrix-tooltip" class="absolute hidden bg-slate-900 text-white p-4 rounded-xl shadow-float border border-slate-700 w-64 opacity-0 backdrop-blur-xl"></div>
+                </div>
+
+                <!-- THE ACADEMIC IRLM FIGURE (Optimized for Publication) -->
+                <div id="irlm-figure" class="bg-white p-12 w-full max-w-[1200px] mx-auto text-black rounded-2xl shadow-sm border border-slate-200">
+                    <!-- FIGURE HEADER -->
+                    <div class="mb-8 border-b-2 border-black pb-6">
+                        <h2 class="text-3xl font-bold text-black tracking-tight uppercase">Implementation Research Logic Model</h2>
+                        <div class="flex gap-6 mt-3 items-center">
+                            <p class="text-black font-semibold uppercase text-xs tracking-widest">Innovation: <span class="font-normal" x-text="project.innovation || 'Undefined'"></span></p>
+                            <div class="h-4 w-px bg-black"></div>
+                            <p class="text-black font-semibold uppercase text-xs tracking-widest">Setting: <span class="font-normal" x-text="project.setting || 'Undefined'"></span></p>
+                            <div class="h-4 w-px bg-black"></div>
+                            <p class="text-black font-semibold uppercase text-xs tracking-widest">Date: <span class="font-normal" x-text="new Date().toLocaleDateString()"></span></p>
+                        </div>
+                    </div>
+
+                    <!-- FIGURE GRID -->
+                    <div class="flex items-stretch gap-0 border-2 border-black min-h-[600px]">
+                        
+                        <!-- COLUMN 1: DETERMINANTS -->
+                        <div class="flex-1 flex flex-col border-r-2 border-black">
+                            <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Determinants</div>
+                            <div class="flex-1 flex flex-col bg-white">
+                                <template x-for="(list, domain) in cfirTaxonomy" :key="domain">
+                                    <div class="flex-1 flex border-b border-black last:border-b-0 min-h-[100px]">
+                                        <div class="w-10 shrink-0 bg-slate-50 border-r border-black flex items-center justify-center">
+                                            <span class="vertical-text text-[10px] font-bold uppercase text-black tracking-widest" x-text="domain"></span>
+                                        </div>
+                                        <div class="flex-1 p-4 text-xs leading-relaxed space-y-3">
+                                            <template x-for="item in items.filter(i => list.includes(i.construct))">
+                                                <div class="flex gap-3 items-start">
+                                                    <div class="w-2.5 h-2.5 rounded-full mt-1 shrink-0 border border-black" :style="`background: ${getRatingColor(item.rating)}`"></div>
+                                                    <div>
+                                                        <span class="font-bold text-black uppercase text-[10px]" x-text="item.construct"></span>: 
+                                                        <span class="text-black" x-text="item.desc"></span>
+                                                        <div class="flex gap-3 mt-1 text-[9px] font-bold text-slate-700 uppercase">
+                                                            <span>Imp: <span x-text="item.impact"></span></span>
+                                                            <span>Feas: <span x-text="item.feasibility"></span></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- COLUMN 2: STRATEGIES -->
+                        <div class="flex-1 flex flex-col border-r-2 border-black">
+                            <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Strategies</div>
+                            <div class="flex-1 p-4 space-y-4 bg-white">
+                                <template x-for="s in selectedStrategies">
+                                    <div class="p-4 bg-white border border-black text-xs relative group">
+                                        <button @click="selectedStrategies = selectedStrategies.filter(x => x !== s)" class="absolute top-2 right-2 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity no-print"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                                        <p class="font-bold text-black uppercase tracking-tight mb-1" x-text="s.strat.text"></p>
+                                        <p class="text-slate-800 font-semibold text-[10px] uppercase mb-2 border-b border-slate-300 pb-1 w-fit" x-text="s.strat.cluster"></p>
+                                        <p class="text-black text-[10px] italic" x-text="`By: ${s.actor} → To: ${s.target}`"></p>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- COLUMN 3: MECHANISMS -->
+                        <div class="flex-1 flex flex-col border-r-2 border-black">
+                            <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Mechanisms</div>
+                            <div class="flex-1 p-4 space-y-4 bg-white">
+                                <template x-for="s in selectedStrategies">
+                                    <div class="p-4 border border-black text-xs min-h-[60px] flex items-center text-black">
+                                        <span x-text="s.justification"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- COLUMN 4: OUTCOMES -->
+                        <div class="flex-1 flex flex-col bg-white">
+                            <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Outcomes</div>
+                            <div class="flex-1 flex flex-col">
+                                <div class="flex-1 p-4 border-b border-black">
+                                    <p class="text-[11px] font-bold uppercase text-black mb-3 tracking-widest">Implementation Outcomes</p>
+                                    <div class="flex flex-col gap-2">
+                                        <template x-for="out in [...new Set(selectedStrategies.map(s => s.outcome))]">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-1.5 h-1.5 bg-black rounded-full"></div>
+                                                <span class="text-black text-[11px] font-semibold uppercase" x-text="out"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="flex-1 p-4 border-b border-black">
+                                    <p class="text-[11px] font-bold uppercase text-black tracking-widest">Service Outcomes</p>
+                                </div>
+                                <div class="flex-1 p-4">
+                                    <p class="text-[11px] font-bold uppercase text-black tracking-widest">Clinical Outcomes</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -471,193 +569,31 @@
         </aside>
     </div>
 
-    <!-- PRINT/PDF LAYOUT -->
-    <div class="hidden print:block p-8 bg-white min-h-screen text-black">
-        <div class="border-b-4 border-slate-900 pb-4 mb-6 flex justify-between items-end">
-            <div>
-                <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 mb-1">Implementation Research Logic Model (IRLM)</h1>
-                <p class="text-brand-600 font-bold uppercase text-xs tracking-widest" x-text="`Innovation: ${project.innovation || 'Undefined'} | Setting: ${project.setting || 'Undefined'}`"></p>
-            </div>
-            <div class="text-right">
-                <p class="text-[10px] font-bold uppercase text-slate-500 tracking-wider mb-1">Generated</p>
-                <p class="text-sm font-bold text-slate-900" x-text="new Date().toLocaleDateString()"></p>
-            </div>
-        </div>
-
-        <!-- DYNAMIC IRLM GRAPHICAL DIAGRAM -->
-        <div id="diagram-container" class="w-full h-auto p-4 flex items-stretch gap-4 bg-white">
-            
-            <!-- 1. Determinants -->
-            <div class="flex-1 flex flex-col">
-                <h2 class="text-center font-bold text-slate-800 mb-3 text-sm uppercase tracking-widest">Determinants</h2>
-                <div class="flex-1 border-2 border-slate-800 p-2 flex flex-col gap-2 rounded-md bg-white">
-                    
-                    <!-- Interventions (Innovation) -->
-                    <div class="flex-auto flex border border-slate-400 rounded-sm overflow-hidden group min-h-[100px]">
-                        <div class="w-10 shrink-0 bg-slate-100 border-r border-slate-400 flex items-center justify-center p-2 text-[10px] font-semibold text-slate-700">
-                            <div class="vertical-text-left text-center leading-tight">Intervention<br>Characteristics</div>
-                        </div>
-                        <div class="flex-1 p-3 text-xs leading-relaxed outline-none">
-                            <template x-for="item in items.filter(i => cfirTaxonomy['Innovation'].includes(i.construct))" :key="item.id">
-                                <div class="mb-2"><strong class="text-slate-800" x-text="item.construct + ':'"></strong> <span class="text-slate-600 italic" x-text="item.desc"></span></div>
-                            </template>
-                        </div>
-                    </div>
-                    
-                    <!-- Inner Setting -->
-                    <div class="flex-auto flex border border-slate-400 rounded-sm overflow-hidden group min-h-[100px]">
-                        <div class="w-10 shrink-0 bg-slate-100 border-r border-slate-400 flex items-center justify-center p-2 text-[10px] font-semibold text-slate-700">
-                            <div class="vertical-text-left text-center leading-tight">Inner<br>Setting</div>
-                        </div>
-                        <div class="flex-1 p-3 text-xs leading-relaxed outline-none">
-                            <template x-for="item in items.filter(i => cfirTaxonomy['Inner Setting'].includes(i.construct))" :key="item.id">
-                                <div class="mb-2"><strong class="text-slate-800" x-text="item.construct + ':'"></strong> <span class="text-slate-600 italic" x-text="item.desc"></span></div>
-                            </template>
-                        </div>
-                    </div>
-
-                    <!-- Outer Setting -->
-                    <div class="flex-auto flex border border-slate-400 rounded-sm overflow-hidden group min-h-[100px]">
-                        <div class="w-10 shrink-0 bg-slate-100 border-r border-slate-400 flex items-center justify-center p-2 text-[10px] font-semibold text-slate-700">
-                            <div class="vertical-text-left text-center leading-tight">Outer<br>Setting</div>
-                        </div>
-                        <div class="flex-1 p-3 text-xs leading-relaxed outline-none">
-                            <template x-for="item in items.filter(i => cfirTaxonomy['Outer Setting'].includes(i.construct))" :key="item.id">
-                                <div class="mb-2"><strong class="text-slate-800" x-text="item.construct + ':'"></strong> <span class="text-slate-600 italic" x-text="item.desc"></span></div>
-                            </template>
-                        </div>
-                    </div>
-
-                    <!-- Characteristics of Individuals -->
-                    <div class="flex-auto flex border border-slate-400 rounded-sm overflow-hidden group min-h-[100px]">
-                        <div class="w-10 shrink-0 bg-slate-100 border-r border-slate-400 flex items-center justify-center p-2 text-[10px] font-semibold text-slate-700">
-                            <div class="vertical-text-left text-center leading-tight">Characteristics<br>of Individuals</div>
-                        </div>
-                        <div class="flex-1 p-3 text-xs leading-relaxed outline-none">
-                            <template x-for="item in items.filter(i => cfirTaxonomy['Individuals'].includes(i.construct))" :key="item.id">
-                                <div class="mb-2"><strong class="text-slate-800" x-text="item.construct + ':'"></strong> <span class="text-slate-600 italic" x-text="item.desc"></span></div>
-                            </template>
-                        </div>
-                    </div>
-
-                    <!-- Process -->
-                    <div class="flex-auto flex border border-slate-400 rounded-sm overflow-hidden group min-h-[100px]">
-                        <div class="w-10 shrink-0 bg-slate-100 border-r border-slate-400 flex items-center justify-center p-2 text-[10px] font-semibold text-slate-700">
-                            <div class="vertical-text-left text-center leading-tight">Process</div>
-                        </div>
-                        <div class="flex-1 p-3 text-xs leading-relaxed outline-none">
-                            <template x-for="item in items.filter(i => cfirTaxonomy['Process'].includes(i.construct))" :key="item.id">
-                                <div class="mb-2"><strong class="text-slate-800" x-text="item.construct + ':'"></strong> <span class="text-slate-600 italic" x-text="item.desc"></span></div>
-                            </template>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Arrow -->
-            <div class="w-6 flex items-center justify-center text-brand-600 shrink-0">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-            </div>
-
-            <!-- 2. Implementation Strategies -->
-            <div class="flex-1 flex flex-col">
-                <h2 class="text-center font-bold text-slate-800 mb-3 text-sm uppercase tracking-widest">Strategies</h2>
-                <div class="flex-1 border-2 border-slate-800 rounded-md bg-white overflow-hidden flex">
-                    <div class="flex-1 p-4 text-xs leading-relaxed outline-none">
-                        <template x-for="(s, idx) in selectedStrategies" :key="idx">
-                            <div class="mb-4 border-b border-slate-100 pb-3 last:border-0 last:pb-0">
-                                <div class="font-bold text-brand-700" x-text="s.strat.text"></div>
-                                <div class="text-[10px] text-slate-600 mt-1"><span class="font-semibold text-slate-500 uppercase tracking-widest">By:</span> <span x-text="s.actor"></span> <span class="font-semibold text-slate-500 ml-2 uppercase tracking-widest">To:</span> <span x-text="s.target"></span></div>
-                                <div class="text-[10px] text-slate-600 mt-0.5"><span class="font-semibold text-slate-500 uppercase tracking-widest">Dose:</span> <span x-text="s.dose"></span></div>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Arrow -->
-            <div class="w-6 flex items-center justify-center text-brand-600 shrink-0">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-            </div>
-
-            <!-- 3. Mechanisms -->
-            <div class="flex-1 flex flex-col">
-                <h2 class="text-center font-bold text-slate-800 mb-3 text-sm uppercase tracking-widest">Mechanisms</h2>
-                <div class="flex-1 border-2 border-slate-800 rounded-md bg-white overflow-hidden flex">
-                    <div class="flex-1 p-4 text-xs leading-relaxed outline-none flex flex-col justify-start">
-                        <template x-for="(s, idx) in selectedStrategies" :key="'mech-'+idx">
-                            <div class="mb-4 text-slate-700 italic border-l-2 border-brand-300 pl-3 last:mb-0" x-text="s.justification"></div>
-                        </template>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Arrow -->
-            <div class="w-6 flex items-center justify-center text-brand-600 shrink-0">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-            </div>
-
-            <!-- 4. Outcomes -->
-            <div class="flex-1 flex flex-col">
-                <h2 class="text-center font-bold text-slate-800 mb-3 text-sm uppercase tracking-widest">Outcomes</h2>
-                <div class="flex-1 flex flex-col gap-1 relative border-2 border-slate-800 p-2 rounded-md bg-white">
-                    
-                    <!-- Implementation Outcomes -->
-                    <div class="flex-auto flex border border-slate-400 rounded-sm overflow-hidden group min-h-[140px]">
-                        <div class="flex-1 p-3 text-sm leading-relaxed outline-none flex flex-col justify-center items-center text-center">
-                            <div class="flex flex-wrap justify-center gap-2">
-                                <template x-for="(s, idx) in selectedStrategies" :key="'out-'+idx">
-                                    <span class="bg-slate-800 text-white font-bold text-[10px] uppercase tracking-wider px-2.5 py-1.5 rounded" x-text="s.outcome"></span>
-                                </template>
-                            </div>
-                        </div>
-                        <div class="w-10 shrink-0 bg-slate-100 border-l border-slate-400 flex items-center justify-center p-2 text-[10px] font-semibold text-slate-700">
-                            <div class="vertical-text-right text-center leading-tight">Implementation</div>
-                        </div>
-                    </div>
-
-                    <!-- Down Arrow -->
-                    <div class="flex justify-center text-slate-400 py-1 shrink-0">
-                        <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
-                    </div>
-
-                    <!-- Service Outcomes -->
-                    <div class="flex-auto flex border border-slate-400 rounded-sm overflow-hidden group min-h-[140px]">
-                        <div class="flex-1 p-3 text-[10px] leading-relaxed outline-none text-slate-400 italic flex items-center justify-center text-center">
-                            (Downstream effect on efficiency, safety, effectiveness, etc.)
-                        </div>
-                        <div class="w-10 shrink-0 bg-slate-100 border-l border-slate-400 flex items-center justify-center p-2 text-[10px] font-semibold text-slate-700">
-                            <div class="vertical-text-right text-center leading-tight">Service</div>
-                        </div>
-                    </div>
-
-                    <!-- Down Arrow -->
-                    <div class="flex justify-center text-slate-400 py-1 shrink-0">
-                        <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
-                    </div>
-
-                    <!-- Clinical/Patient Outcomes -->
-                    <div class="flex-auto flex border border-slate-400 rounded-sm overflow-hidden group min-h-[140px]">
-                        <div class="flex-1 p-3 text-[10px] leading-relaxed outline-none text-slate-400 italic flex items-center justify-center text-center">
-                            (Ultimate effect on health status, symptoms, satisfaction)
-                        </div>
-                        <div class="w-10 shrink-0 bg-slate-100 border-l border-slate-400 flex items-center justify-center p-2 text-[10px] font-semibold text-slate-700">
-                            <div class="vertical-text-right text-center leading-tight">Clinical/Patient</div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-    </div>
-
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('prepApp', () => ({
-                project: { innovation: '', setting: '', initialized: false },
-                items: [],
-                selectedStrategies: [],
+                project: { innovation: 'Youth Readiness Intervention (YRI) via Mobile Supervision', setting: 'Secondary Schools in Western Region, Sierra Leone', initialized: true },
+                items: [
+                    { id: 1, construct: 'Capability', rating: 20, impact: 9, feasibility: 8, frequency: 5, duration: 5, desc: 'Teachers are lay workers with no prior formal training in delivering cognitive behavioral or interpersonal mental health therapies.' },
+                    { id: 2, construct: 'Available Resources', rating: 15, impact: 10, feasibility: 7, frequency: 5, duration: 5, desc: 'Severe shortage of specialized behavioral health professionals; traditional in-person supervision involves prohibitive transportation and time costs.' },
+                    { id: 3, construct: 'Patient Needs', rating: 95, impact: 10, feasibility: 5, frequency: 5, duration: 5, desc: '98% mental health treatment gap among youth due to compounded adversity (civil war, Ebola); high unmet need for emotion regulation skills.' },
+                    { id: 4, construct: 'Compatibility', rating: 75, impact: 7, feasibility: 8, frequency: 4, duration: 4, desc: 'YRI logic fits into the school environment and can be scheduled as a weekly extracurricular activity after school or during Friday free periods.' },
+                    { id: 5, construct: 'Innovation Complexity', rating: 35, impact: 8, feasibility: 7, frequency: 5, duration: 4, desc: 'The mobile-based supervision model requires teachers to navigate an mHealth app, record audio segments, and use WhatsApp, posing tech literacy challenges.' }
+                ],
+                selectedStrategies: [
+                    {
+                        strat: { text: "Conduct localized educational meetings", cluster: "Train and Educate Stakeholders", consensus: 85 },
+                        outcome: "Fidelity", actor: "YRI Expert Trainers", target: "Secondary School Teachers", dose: "10-day intensive in-person training", justification: "Builds foundational capability and competency (>70% score requirement) for lay teachers to deliver YRI accurately."
+                    },
+                    {
+                        strat: { text: "Provide clinical supervision", cluster: "Support Clinicians", consensus: 70 },
+                        outcome: "Feasibility", actor: "YRI Supervisors", target: "YRI Teacher Facilitators", dose: "Weekly 30-45 min sessions via WhatsApp", justification: "Mobile supervision mitigates resource barriers (travel time and cost) while maintaining necessary clinical oversight."
+                    },
+                    {
+                        strat: { text: "Develop educational materials", cluster: "Train and Educate Stakeholders", consensus: 82 },
+                        outcome: "Acceptability", actor: "DSTI & Program Managers", target: "YRI Teacher Facilitators", dose: "1-day tech training + app manual", justification: "Reduces the complexity of the mobile supervision model by actively training teachers on the mHealth app and WhatsApp integration."
+                    }
+                ],
                 newItem: { id: null, desc: '', construct: '', rating: 50, impact: 5, feasibility: 5, frequency: 3, duration: 3 },
                 leftOpen: true, rightOpen: true, notifications: [],
                 
@@ -672,22 +608,15 @@
                 },
                 
                 cfirDefinitions: {
-                    "Innovation Adaptability": "The degree to which the innovation can be adapted, tailored, refined, or reinvented to meet local needs. (Damschroder et al., 2022)",
-                    "Innovation Complexity": "The perceived difficulty of the innovation, reflected by duration, scope, disruptiveness, and number of steps required to implement. (Damschroder et al., 2022)",
-                    "Design Quality": "The perceived excellence in how the innovation is bundled, presented, and assembled. (Damschroder et al., 2022)",
-                    "External Pressure": "Political, social, or competitive forces outside the inner setting pushing for implementation of the innovation. (Damschroder et al., 2022)",
-                    "Patient Needs": "The extent to which the needs and preferences of those served by the organization are known and prioritized. (Damschroder et al., 2022)",
-                    "Local Conditions": "Economic, geographic, political, and social conditions in the outer setting that might impact implementation. (Damschroder et al., 2022)",
-                    "Tension for Change": "The degree to which stakeholders perceive the current situation as intolerable or needing change. (Damschroder et al., 2022)",
-                    "Compatibility": "The degree of tangible fit between the innovation and the inner setting's norms, values, workflows, and systems. (Damschroder et al., 2022)",
-                    "Available Resources": "The level of resources dedicated for implementation and ongoing operations, including money, training, space, and time. (Damschroder et al., 2022)",
-                    "Readiness": "Tangible and immediate indicators of organizational commitment to its decision to implement an innovation. (Damschroder et al., 2022)",
-                    "Capability": "The degree to which individuals possess the knowledge, skills, and abilities required to implement the innovation. (Damschroder et al., 2022)",
-                    "Motivation": "The individuals' commitment, enthusiasm, and willingness to engage in implementation activities. (Damschroder et al., 2022)",
-                    "Self-Efficacy": "Individuals' belief in their own capabilities to execute courses of action to achieve implementation goals. (Damschroder et al., 2022)",
-                    "Teaming": "The degree to which team members interact with one another to accomplish interdependent tasks. (Damschroder et al., 2022)",
-                    "Engaging": "Attracting and involving appropriate individuals in the implementation and use of the innovation. (Damschroder et al., 2022)",
-                    "Planning": "The degree to which a scheme or method of behavior and tasks is developed in advance of implementation. (Damschroder et al., 2022)"
+                    "Innovation Adaptability": "The degree to which the new program, treatment, or tool can be modified, tailored, or refined to fit local community needs and clinical contexts.",
+                    "Innovation Complexity": "The degree to which the new program is complicated, which may be reflected by its massive scope, the number of required connections, and the sheer volume of implementation steps.",
+                    "External Pressure": "General external pressures driving the organization to implement the new program, including societal advocacy, market competition, or mandated performance metrics.",
+                    "Tension for Change": "The degree to which stakeholders within the organization believe the current situation is intolerable and desperately needs to change.",
+                    "Compatibility": "The degree to which the new program logically fits with existing workflows, legacy software systems, and established clinical processes.",
+                    "Capability": "The degree to which an individual staff member possesses the required competence, knowledge, and technical skills to fulfill their designated role.",
+                    "Motivation": "The degree to which an individual staff member is personally committed to, and enthusiastic about, fulfilling their specific implementation role.",
+                    "Teaming": "Intentionally joining together and collaborating across departmental boundaries to execute interdependent implementation tasks.",
+                    "Engaging": "Systematically attracting and encouraging active participation from those who will be delivering or receiving the new program."
                 },
 
                 ericMapping: {
@@ -719,7 +648,7 @@
                 },
 
                 init() {
-                    const saved = localStorage.getItem('impsci-nav-workspace-v1');
+                    const saved = localStorage.getItem('impsci-nav-sl-demo-v1');
                     if (saved) {
                         try {
                             const d = JSON.parse(saved);
@@ -742,7 +671,7 @@
                 },
 
                 initializeProject() { this.project.initialized = true; this.save(); },
-                save() { localStorage.setItem('impsci-nav-workspace-v1', JSON.stringify({ project: this.project, items: this.items, selectedStrategies: this.selectedStrategies })); },
+                save() { localStorage.setItem('impsci-nav-sl-demo-v1', JSON.stringify({ project: this.project, items: this.items, selectedStrategies: this.selectedStrategies })); },
 
                 addItem() {
                     const id = Date.now();
@@ -761,7 +690,7 @@
                 resetData() { 
                     if(confirm("Clear entire project workspace? This cannot be undone.")) { 
                         this.items = []; this.selectedStrategies = []; this.project = { innovation: '', setting: '', initialized: false };
-                        localStorage.removeItem('impsci-nav-workspace-v1'); this.notify("Session reset");
+                        localStorage.removeItem('impsci-nav-sl-demo-v1'); this.notify("Session reset");
                     }
                 },
 
@@ -977,6 +906,27 @@
                         svgElement.setAttribute('width', '100%');
                         svgElement.setAttribute('height', '100%');
                     });
+                },
+
+                async exportIRLM() {
+                    const el = document.getElementById('irlm-figure');
+                    if (!el) return;
+                    this.notify("Preparing high-res logic model export...");
+                    try {
+                        const dataUrl = await htmlToImage.toPng(el, { 
+                            pixelRatio: 3, 
+                            backgroundColor: '#ffffff',
+                            quality: 1
+                        });
+                        const link = document.createElement('a');
+                        link.download = `IRLM_${this.project.innovation || 'Figure'}_${new Date().toLocaleDateString().replace(/\//g, '-')}.png`;
+                        link.href = dataUrl;
+                        link.click();
+                        this.notify("IRLM Figure exported successfully!");
+                    } catch (error) {
+                        console.error("Failed to export logic model", error);
+                        this.notify("Failed to export logic model.");
+                    }
                 }
             }));
         });
