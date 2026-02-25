@@ -72,6 +72,9 @@
             display: block; 
         }
 
+        .irlm-academic-border { border: 1.5px solid #000; }
+        .irlm-academic-header { background: #f8fafc; border-bottom: 2px solid #000; }
+
         @media print {
             @page { size: landscape; margin: 0.5cm; }
             .no-print { display: none !important; }
@@ -378,40 +381,40 @@
                     <div id="matrix-tooltip" class="absolute hidden bg-slate-900 text-white p-4 rounded-xl shadow-float border border-slate-700 w-64 opacity-0 backdrop-blur-xl"></div>
                 </div>
 
-                <!-- IRLM FIGURE -->
-                <div id="irlm-figure" class="bg-white p-12 w-full max-w-[1200px] mx-auto text-black rounded-2xl shadow-sm border border-slate-200">
-                    <div class="mb-8 border-b-2 border-black pb-6">
-                        <h2 class="text-3xl font-bold text-black tracking-tight uppercase">Implementation Research Logic Model</h2>
-                        <div class="flex gap-6 mt-3 items-center">
-                            <p class="text-black font-semibold uppercase text-xs tracking-widest">Innovation: <span class="font-normal" x-text="project.innovation || 'Undefined'"></span></p>
-                            <div class="h-4 w-px bg-black"></div>
-                            <p class="text-black font-semibold uppercase text-xs tracking-widest">Setting: <span class="font-normal" x-text="project.setting || 'Undefined'"></span></p>
-                            <div class="h-4 w-px bg-black"></div>
-                            <p class="text-black font-semibold uppercase text-xs tracking-widest">Date: <span class="font-normal" x-text="new Date().toLocaleDateString()"></span></p>
+                <!-- ACADEMIC OPTIMIZED IRLM FIGURE -->
+                <div id="irlm-figure" class="bg-white p-16 w-full max-w-[1300px] mx-auto text-black rounded-sm border-2 border-black" style="font-family: 'Inter', sans-serif;">
+                    <!-- Publication Style Header -->
+                    <div class="mb-10 text-left border-b-4 border-black pb-8">
+                        <h2 class="text-3xl font-extrabold uppercase tracking-tighter mb-4">Implementation Research Logic Model (IRLM)</h2>
+                        <div class="grid grid-cols-3 gap-8 text-[11px] font-bold uppercase tracking-widest">
+                            <div><span class="text-slate-500 mr-2">Innovation:</span> <span class="text-black" x-text="project.innovation || 'Not Specified'"></span></div>
+                            <div><span class="text-slate-500 mr-2">Contextual Setting:</span> <span class="text-black" x-text="project.setting || 'Not Specified'"></span></div>
+                            <div><span class="text-slate-500 mr-2">Generation Date:</span> <span class="text-black" x-text="new Date().toLocaleDateString()"></span></div>
                         </div>
                     </div>
 
-                    <div class="flex items-stretch gap-0 border-2 border-black">
-                        <!-- DETERMINANTS -->
-                        <div class="flex-1 flex flex-col border-r-2 border-black">
-                            <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Determinants</div>
-                            <div class="flex-1 flex flex-col bg-white">
+                    <!-- Figure Grid -->
+                    <div class="flex items-stretch border-[3px] border-black">
+                        <!-- COLUMN 1: CONTEXTUAL DETERMINANTS (CFIR 2.0) -->
+                        <div class="flex-[1.2] flex flex-col border-r-[3px] border-black">
+                            <div class="bg-slate-100 text-center py-3 font-black text-xs uppercase tracking-[0.2em] border-b-[3px] border-black">Contextual Determinants</div>
+                            <div class="flex-1 bg-white">
                                 <template x-for="(list, domain) in cfirTaxonomy" :key="domain">
                                     <template x-if="items.filter(i => list.includes(i.construct)).length > 0">
-                                        <div class="flex border-b border-black last:border-b-0">
-                                            <div class="w-10 shrink-0 bg-slate-50 border-r border-black flex items-center justify-center py-2">
-                                                <span class="vertical-text text-[10px] font-bold uppercase text-black tracking-widest" x-text="domain"></span>
+                                        <div class="flex border-b-2 border-black last:border-b-0">
+                                            <div class="w-12 shrink-0 bg-slate-50 border-r-2 border-black flex items-center justify-center py-4">
+                                                <span class="vertical-text text-[9px] font-black uppercase tracking-tighter" x-text="domain"></span>
                                             </div>
-                                            <div class="flex-1 p-4 text-xs leading-relaxed space-y-3">
+                                            <div class="flex-1 p-5 space-y-4">
                                                 <template x-for="item in items.filter(i => list.includes(i.construct))">
-                                                    <div class="flex gap-3 items-start">
-                                                        <div class="w-2.5 h-2.5 rounded-full mt-1 shrink-0 border border-black" :style="`background: ${getRatingColor(item.rating)}`"></div>
-                                                        <div>
-                                                            <span class="font-bold text-black uppercase text-[10px]" x-text="item.construct"></span>: 
-                                                            <span class="text-black" x-text="item.desc"></span>
-                                                            <div class="flex gap-3 mt-1 text-[9px] font-bold text-slate-700 uppercase">
-                                                                <span>Imp: <span x-text="item.impact"></span></span>
-                                                                <span>Feas: <span x-text="item.feasibility"></span></span>
+                                                    <div class="flex gap-4 items-start">
+                                                        <div class="w-3 h-3 rounded-full mt-1 shrink-0 border-2 border-black shadow-[2px_2px_0_#000]" :style="`background: ${getRatingColor(item.rating)}`"></div>
+                                                        <div class="text-[12px] leading-tight">
+                                                            <div class="font-black uppercase text-[10px] mb-1"><span x-text="item.construct"></span> <span class="text-slate-400 px-1">|</span> <span class="text-slate-600" x-text="`Valence: ${item.rating}%`"></span></div>
+                                                            <div class="text-black font-medium" x-text="item.desc"></div>
+                                                            <div class="mt-2 flex gap-3 text-[10px] font-bold text-slate-500">
+                                                                <span x-text="`Importance: ${item.impact}/10`" class="bg-slate-100 px-1.5 py-0.5 border border-slate-200"></span>
+                                                                <span x-text="`Feasibility: ${item.feasibility}/10`" class="bg-slate-100 px-1.5 py-0.5 border border-slate-200"></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -423,44 +426,72 @@
                             </div>
                         </div>
 
-                        <!-- STRATEGIES -->
-                        <div class="flex-1 flex flex-col border-r-2 border-black">
-                            <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Strategies</div>
-                            <div class="flex-1 p-4 space-y-4 bg-white">
+                        <!-- COLUMN 2: IMPLEMENTATION STRATEGIES (ERIC) -->
+                        <div class="flex-1 flex flex-col border-r-[3px] border-black">
+                            <div class="bg-slate-100 text-center py-3 font-black text-xs uppercase tracking-[0.2em] border-b-[3px] border-black">Implementation Strategies</div>
+                            <div class="flex-1 bg-white p-5 space-y-6">
                                 <template x-for="s in selectedStrategies">
-                                    <div class="p-4 bg-white border border-black text-xs relative group">
-                                        <p class="font-bold text-black uppercase tracking-tight mb-1" x-text="s.strat.text"></p>
-                                        <p class="text-slate-800 font-semibold text-[10px] uppercase mb-2 border-b border-slate-300 pb-1 w-fit" x-text="s.strat.cluster"></p>
-                                        <p class="text-black text-[10px] italic" x-text="`By: ${s.actor} → To: ${s.target}`"></p>
+                                    <div class="p-5 border-2 border-black bg-white shadow-[4px_4px_0_#000] relative">
+                                        <div class="text-[10px] font-black uppercase text-slate-500 mb-1" x-text="s.strat.cluster"></div>
+                                        <div class="text-[13px] font-black uppercase leading-tight mb-3" x-text="s.strat.text"></div>
+                                        <div class="text-[11px] space-y-1.5 font-bold">
+                                            <div class="flex gap-2">
+                                                <span class="text-slate-400 uppercase text-[9px] w-12 shrink-0">Actor</span>
+                                                <span class="text-black" x-text="s.actor"></span>
+                                            </div>
+                                            <div class="flex gap-2">
+                                                <span class="text-slate-400 uppercase text-[9px] w-12 shrink-0">Target</span>
+                                                <span class="text-black" x-text="s.target"></span>
+                                            </div>
+                                            <div class="flex gap-2">
+                                                <span class="text-slate-400 uppercase text-[9px] w-12 shrink-0">Dose</span>
+                                                <span class="text-black italic" x-text="s.dose"></span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </template>
                             </div>
                         </div>
 
-                        <!-- MECHANISMS -->
-                        <div class="flex-1 flex flex-col border-r-2 border-black">
-                            <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Mechanisms</div>
-                            <div class="flex-1 p-4 space-y-4 bg-white">
+                        <!-- COLUMN 3: MECHANISMS OF ACTION -->
+                        <div class="flex-1 flex flex-col border-r-[3px] border-black">
+                            <div class="bg-slate-100 text-center py-3 font-black text-xs uppercase tracking-[0.2em] border-b-[3px] border-black">Mechanisms of Action</div>
+                            <div class="flex-1 bg-white p-5 space-y-6">
                                 <template x-for="s in selectedStrategies">
-                                    <div class="p-4 border border-black text-xs text-black">
-                                        <span x-text="s.justification"></span>
+                                    <div class="p-5 border-2 border-black border-dashed h-fit flex items-center justify-center min-h-[100px] text-center">
+                                        <span class="text-[12px] font-bold text-black" x-text="s.justification"></span>
                                     </div>
                                 </template>
                             </div>
                         </div>
 
-                        <!-- OUTCOMES -->
+                        <!-- COLUMN 4: IMPLEMENTATION OUTCOMES -->
                         <div class="flex-1 flex flex-col bg-white">
-                            <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Outcomes</div>
-                            <div class="flex-1 p-4">
-                                <template x-for="out in [...new Set(selectedStrategies.map(s => s.outcome))]">
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <div class="w-1.5 h-1.5 bg-black rounded-full"></div>
-                                        <span class="text-black text-[11px] font-semibold uppercase" x-text="out"></span>
+                            <div class="bg-slate-100 text-center py-3 font-black text-xs uppercase tracking-[0.2em] border-b-[3px] border-black">Implementation Outcomes</div>
+                            <div class="flex-1 bg-white p-8">
+                                <div class="space-y-6">
+                                    <template x-for="out in [...new Set(selectedStrategies.map(s => s.outcome))]">
+                                        <div class="flex items-start gap-4 p-4 border-2 border-black bg-slate-50">
+                                            <div class="w-4 h-4 mt-0.5 shrink-0 bg-black rotate-45"></div>
+                                            <div class="text-[14px] font-black uppercase tracking-tight" x-text="out"></div>
+                                        </div>
+                                    </template>
+                                </div>
+                                <div class="mt-12 pt-8 border-t-2 border-black border-dotted">
+                                    <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-4">Secondary Clinical/Service Outcomes</p>
+                                    <div class="text-[12px] font-bold text-slate-800 space-y-2 opacity-50 italic">
+                                        <p>• Organizational Efficiency</p>
+                                        <p>• Patient Health Status</p>
+                                        <p>• Service Quality</p>
                                     </div>
-                                </template>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                    
+                    <!-- Caption -->
+                    <div class="mt-8 text-[12px] font-medium italic text-slate-500 border-t border-slate-200 pt-4">
+                        Note: Determinant valence represents the degree of facilitation (Green) or barrier (Red). Strategy matches based on ERIC Taxonomy expert consensus.
                     </div>
                 </div>
             </div>
@@ -506,7 +537,7 @@
                         <div class="space-y-3">
                             <template x-for="(s, idx) in selectedStrategies" :key="idx">
                                 <div class="p-4 bg-white border-l-4 border-brand-500 rounded-r-xl shadow-sm group relative">
-                                    <button @click="removeStrategy(idx)" class="absolute top-2 right-2 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                                    <button @click="removeStrategy(idx)" class="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
                                     <p class="text-[10px] font-bold text-slate-400 uppercase mb-1" x-text="s.outcome"></p>
                                     <p class="text-sm font-bold text-slate-900 leading-tight mb-2 pr-4" x-text="s.strat.text"></p>
                                     <p class="text-[11px] text-slate-600"><strong>By:</strong> <span x-text="s.actor"></span> <strong>To:</strong> <span x-text="s.target"></span></p>
@@ -703,7 +734,6 @@
                     const radiusScale = d3.scaleLinear().domain([1, 5]).range([12, 32]);
                     const opacityScale = d3.scaleLinear().domain([1, 5]).range([0.4, 1]);
 
-                    // Axis lines
                     svg.append("line").attr("x1", x(5)).attr("y1", margin).attr("x2", x(5)).attr("y2", height - margin).attr("stroke", "#cbd5e1").attr("stroke-dasharray", "6,6");
                     svg.append("line").attr("x1", margin).attr("y1", y(5)).attr("x2", width - margin).attr("y2", y(5)).attr("stroke", "#cbd5e1").attr("stroke-dasharray", "6,6");
 
@@ -804,17 +834,46 @@
 
                 exportPNG() {
                     const target = document.querySelector('.matrix-bg');
-                    window.html2canvas(target).then(canvas => {
-                        const link = document.createElement('a'); link.download = 'Matrix.png';
+                    window.html2canvas(target, { scale: 3 }).then(canvas => {
+                        const link = document.createElement('a'); link.download = 'MCDA_Matrix.png';
                         link.href = canvas.toDataURL(); link.click();
+                        this.notify("Matrix exported at high resolution");
                     });
                 },
 
                 async exportIRLM() {
                     const el = document.getElementById('irlm-figure');
-                    const dataUrl = await htmlToImage.toPng(el);
-                    const link = document.createElement('a'); link.download = 'IRLM.png';
-                    link.href = dataUrl; link.click();
+                    if (!el) return;
+                    this.notify("Rendering Publication-Quality Logic Model...");
+                    
+                    try {
+                        // Use html-to-image with higher quality settings and filtering for Canvas env
+                        const dataUrl = await htmlToImage.toPng(el, { 
+                            pixelRatio: 3,
+                            backgroundColor: '#ffffff',
+                            quality: 1,
+                            style: {
+                                transform: 'scale(1)',
+                                transformOrigin: 'top left'
+                            }
+                        });
+                        
+                        const link = document.createElement('a');
+                        link.download = `IRLM_PublicationReady_${this.project.innovation.substring(0,10)}_${new Date().toISOString().split('T')[0]}.png`;
+                        link.href = dataUrl;
+                        link.click();
+                        this.notify("Academic IRLM Export Complete");
+                    } catch (error) {
+                        console.error("Export Error:", error);
+                        // Fallback to html2canvas if html-to-image fails in this container
+                        window.html2canvas(el, { scale: 3, useCORS: true }).then(canvas => {
+                            const link = document.createElement('a');
+                            link.download = 'IRLM_Logic_Model_HighRes.png';
+                            link.href = canvas.toDataURL();
+                            link.click();
+                            this.notify("Export Complete (Fallback Engine)");
+                        });
+                    }
                 }
             }));
         });
