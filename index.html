@@ -58,7 +58,6 @@
             100% { stroke-width: 3; stroke-opacity: 1; } 
         }
 
-        /* Print Hiding */
         @media print { .no-print { display: none !important; } }
     </style>
 </head>
@@ -139,7 +138,7 @@
                             <label class="text-[10px] font-bold text-slate-400 uppercase">Valence (Rating)</label>
                             <span :class="getRatingTextColor(newItem.rating)" class="text-[10px] font-black uppercase tracking-wider" x-text="formatRating(newItem.rating)"></span>
                         </div>
-                        <input type="range" min="0" max="100" step="1" x-model="newItem.rating" class="w-full h-2 bg-gradient-to-r from-rose-400 via-slate-300 to-emerald-400 rounded-lg appearance-none cursor-pointer">
+                        <input type="range" min="0" max="100" step="1" x-model="newItem.rating" class="w-full h-2 bg-gradient-to-r from-red-500 via-slate-400 to-green-600 rounded-lg appearance-none cursor-pointer">
                         <div class="flex justify-between text-[9px] font-bold text-slate-300 uppercase mt-1"><span>Barrier</span><span>Neutral</span><span>Facilitator</span></div>
                     </div>
 
@@ -211,63 +210,55 @@
              </section>
         </aside>
 
-        <main class="flex-1 overflow-y-auto bg-slate-50 p-8 space-y-12 custom-scroll scroll-smooth">
+        <main class="flex-1 overflow-y-auto bg-slate-200 p-8 space-y-12 custom-scroll scroll-smooth">
             
-            <div class="bg-white rounded-[32px] shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[650px] matrix-bg relative">
-                <div class="px-10 py-6 border-b bg-white/90 backdrop-blur-md z-10 flex justify-between items-center">
+            <div class="bg-white rounded-xl shadow-md border border-slate-300 overflow-hidden flex flex-col h-[650px] matrix-bg relative">
+                <div class="px-8 py-4 border-b bg-white/95 backdrop-blur-md z-10 flex justify-between items-center">
                     <div>
-                        <h2 class="text-sm font-black text-slate-900 uppercase tracking-tighter">MCDA Prioritization Matrix</h2>
-                        <div class="flex gap-4 mt-1.5">
-                            <span class="text-[10px] text-slate-400 font-bold uppercase flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-slate-200 border border-slate-300"></div> Size = Frequency</span>
-                            <span class="text-[10px] text-slate-400 font-bold uppercase flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-slate-200 opacity-30 border border-slate-300"></div> Opacity = Duration</span>
+                        <h2 class="text-sm font-black text-slate-900 uppercase tracking-tight">MCDA Prioritization Matrix</h2>
+                        <div class="flex gap-4 mt-1">
+                            <span class="text-[10px] text-slate-500 font-bold uppercase flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-slate-300 border border-slate-400"></div> Size = Frequency</span>
+                            <span class="text-[10px] text-slate-500 font-bold uppercase flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-slate-300 opacity-40 border border-slate-400"></div> Opacity = Duration</span>
                         </div>
-                    </div>
-                    <div class="flex gap-4">
-                        <span class="flex items-center gap-2 text-[10px] font-black uppercase text-rose-600"><div class="w-2 h-2 rounded-full bg-rose-600"></div> Barrier</span>
-                        <span class="flex items-center gap-2 text-[10px] font-black uppercase text-emerald-600"><div class="w-2 h-2 rounded-full bg-emerald-600"></div> Facilitator</span>
                     </div>
                 </div>
                 <div id="matrix" class="flex-1 relative overflow-hidden cursor-crosshair"></div>
-                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-[10px] font-black uppercase text-slate-300 tracking-[0.2em] pointer-events-none">Impact</div>
-                <div class="absolute left-4 top-1/2 -translate-y-1/2 -rotate-90 text-[10px] font-black uppercase text-slate-300 tracking-[0.2em] pointer-events-none">Feasibility</div>
+                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] pointer-events-none">Impact</div>
+                <div class="absolute left-4 top-1/2 -translate-y-1/2 -rotate-90 text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] pointer-events-none">Feasibility</div>
             </div>
 
-            <div id="irlm-figure" class="bg-white rounded-[40px] shadow-2xl border border-slate-200 p-16 min-w-[1300px] mx-auto">
-                <div class="mb-12 border-b-8 border-slate-900 pb-8 flex justify-between items-end">
-                    <div>
-                        <h2 class="text-5xl font-black text-slate-900 tracking-tighter uppercase italic leading-none">Implementation Research Logic Model</h2>
-                        <div class="flex gap-4 mt-4 items-center">
-                            <p class="text-brand-600 font-bold uppercase text-[11px] tracking-[0.2em]">Innovation: <span class="text-slate-900" x-text="project.innovation"></span></p>
-                            <div class="h-4 w-px bg-slate-300"></div>
-                            <p class="text-brand-600 font-bold uppercase text-[11px] tracking-[0.2em]">Setting: <span class="text-slate-900" x-text="project.setting"></span></p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1">Generated Output</p>
-                        <p class="text-lg font-black text-slate-900" x-text="new Date().toLocaleDateString()"></p>
+            <div id="irlm-figure" class="bg-white p-12 min-w-[1200px] mx-auto text-black">
+                <div class="mb-8 border-b-2 border-black pb-6">
+                    <h2 class="text-3xl font-bold text-black tracking-tight uppercase">Implementation Research Logic Model</h2>
+                    <div class="flex gap-6 mt-3 items-center">
+                        <p class="text-black font-semibold uppercase text-xs tracking-widest">Innovation: <span class="font-normal" x-text="project.innovation"></span></p>
+                        <div class="h-4 w-px bg-black"></div>
+                        <p class="text-black font-semibold uppercase text-xs tracking-widest">Setting: <span class="font-normal" x-text="project.setting"></span></p>
+                        <div class="h-4 w-px bg-black"></div>
+                        <p class="text-black font-semibold uppercase text-xs tracking-widest">Date: <span class="font-normal" x-text="new Date().toLocaleDateString()"></span></p>
                     </div>
                 </div>
 
-                <div class="flex items-stretch gap-8 min-h-[600px]">
+                <div class="flex items-stretch gap-0 border-2 border-black min-h-[600px]">
                     
-                    <div class="flex-1 flex flex-col">
-                        <div class="text-center font-black text-xs mb-4 uppercase bg-slate-900 text-white py-2 tracking-[0.2em] rounded-t-lg">1. Determinants</div>
-                        <div class="flex-1 border-[6px] border-slate-900 flex flex-col p-2 gap-2">
+                    <div class="flex-1 flex flex-col border-r-2 border-black">
+                        <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Determinants</div>
+                        <div class="flex-1 flex flex-col bg-white">
                             <template x-for="(list, domain) in cfirTaxonomy" :key="domain">
-                                <div class="flex-1 flex border-2 border-slate-50 min-h-[100px]">
-                                    <div class="w-10 shrink-0 bg-slate-50 border-r-2 border-slate-100 flex items-center justify-center">
-                                        <span class="vertical-text text-[10px] font-black uppercase text-slate-400 tracking-tighter" x-text="domain"></span>
+                                <div class="flex-1 flex border-b border-black last:border-b-0 min-h-[100px]">
+                                    <div class="w-10 shrink-0 bg-slate-50 border-r border-black flex items-center justify-center">
+                                        <span class="vertical-text text-[10px] font-bold uppercase text-black tracking-widest" x-text="domain"></span>
                                     </div>
-                                    <div class="flex-1 p-4 text-[11px] leading-relaxed space-y-3">
+                                    <div class="flex-1 p-4 text-xs leading-relaxed space-y-3">
                                         <template x-for="item in items.filter(i => list.includes(i.construct))">
                                             <div class="flex gap-3 items-start">
-                                                <div class="w-2.5 h-2.5 rounded-full mt-1 shrink-0" :style="`background: ${getRatingColor(item.rating)}`"></div>
+                                                <div class="w-2.5 h-2.5 rounded-full mt-1 shrink-0 border border-black" :style="`background: ${getRatingColor(item.rating)}`"></div>
                                                 <div>
-                                                    <span class="font-black text-slate-900 uppercase text-[10px]" x-text="item.construct"></span>: 
-                                                    <span class="text-slate-600" x-text="item.desc"></span>
-                                                    <div class="flex gap-3 mt-1 text-[8px] font-black text-slate-300 uppercase">
-                                                        <span>Imp: <span class="text-slate-900" x-text="item.impact"></span></span>
-                                                        <span>Feas: <span class="text-slate-900" x-text="item.feasibility"></span></span>
+                                                    <span class="font-bold text-black uppercase text-[10px]" x-text="item.construct"></span>: 
+                                                    <span class="text-black" x-text="item.desc"></span>
+                                                    <div class="flex gap-3 mt-1 text-[9px] font-bold text-slate-700 uppercase">
+                                                        <span>Imp: <span x-text="item.impact"></span></span>
+                                                        <span>Feas: <span x-text="item.feasibility"></span></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -278,47 +269,50 @@
                         </div>
                     </div>
 
-                    <div class="flex-1 flex flex-col">
-                        <div class="text-center font-black text-xs mb-4 uppercase bg-brand-600 text-white py-2 tracking-[0.2em] rounded-t-lg">2. Strategies</div>
-                        <div class="flex-1 border-[6px] border-brand-600 p-6 space-y-4 bg-brand-50/10">
+                    <div class="flex-1 flex flex-col border-r-2 border-black">
+                        <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Strategies</div>
+                        <div class="flex-1 p-4 space-y-4 bg-white">
                             <template x-for="s in selectedStrategies">
-                                <div class="p-4 bg-white border-l-8 border-brand-600 shadow-sm text-[11px] relative group">
-                                    <button @click="selectedStrategies = selectedStrategies.filter(x => x !== s)" class="absolute top-2 right-2 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity no-print"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
-                                    <p class="font-black text-slate-900 uppercase tracking-tight mb-1" x-text="s.strat.text"></p>
-                                    <p class="text-brand-600 font-bold text-[9px] uppercase mb-2" x-text="s.strat.cluster"></p>
-                                    <p class="text-slate-500 text-[10px] italic" x-text="`${s.actor} → ${s.target}`"></p>
+                                <div class="p-4 bg-white border border-black text-xs relative group">
+                                    <button @click="selectedStrategies = selectedStrategies.filter(x => x !== s)" class="absolute top-2 right-2 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity no-print"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                                    <p class="font-bold text-black uppercase tracking-tight mb-1" x-text="s.strat.text"></p>
+                                    <p class="text-slate-800 font-semibold text-[10px] uppercase mb-2 border-b border-slate-300 pb-1 w-fit" x-text="s.strat.cluster"></p>
+                                    <p class="text-black text-[10px] italic" x-text="`By: ${s.actor} → To: ${s.target}`"></p>
                                 </div>
                             </template>
                         </div>
                     </div>
 
-                    <div class="flex-1 flex flex-col">
-                        <div class="text-center font-black text-xs mb-4 uppercase bg-slate-900 text-white py-2 tracking-[0.2em] rounded-t-lg">3. Mechanisms</div>
-                        <div class="flex-1 border-[6px] border-slate-900 p-6 space-y-4">
+                    <div class="flex-1 flex flex-col border-r-2 border-black">
+                        <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Mechanisms</div>
+                        <div class="flex-1 p-4 space-y-4 bg-white">
                             <template x-for="s in selectedStrategies">
-                                <div class="p-4 border-2 border-dashed border-slate-300 min-h-[60px] flex items-center justify-center text-center text-[10px] text-slate-500 font-medium">
+                                <div class="p-4 border border-black text-xs min-h-[60px] flex items-center text-black">
                                     <span x-text="s.justification"></span>
                                 </div>
                             </template>
                         </div>
                     </div>
 
-                    <div class="flex-1 flex flex-col">
-                        <div class="text-center font-black text-xs mb-4 uppercase bg-slate-900 text-white py-2 tracking-[0.2em] rounded-t-lg">4. Outcomes</div>
-                        <div class="flex-1 border-[6px] border-slate-900 flex flex-col">
-                            <div class="flex-1 p-6 border-b-4 border-slate-900 bg-slate-50/50">
-                                <p class="text-[10px] font-black uppercase text-slate-400 mb-3 tracking-widest">Implementation Outcomes</p>
-                                <div class="flex flex-wrap gap-2">
+                    <div class="flex-1 flex flex-col bg-white">
+                        <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Outcomes</div>
+                        <div class="flex-1 flex flex-col">
+                            <div class="flex-1 p-4 border-b border-black">
+                                <p class="text-[11px] font-bold uppercase text-black mb-3 tracking-widest">Implementation Outcomes</p>
+                                <div class="flex flex-col gap-2">
                                     <template x-for="out in [...new Set(selectedStrategies.map(s => s.outcome))]">
-                                        <span class="bg-slate-900 text-white px-3 py-1 rounded text-[10px] font-bold uppercase shadow-sm" x-text="out"></span>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-1.5 h-1.5 bg-black rounded-full"></div>
+                                            <span class="text-black text-[11px] font-semibold uppercase" x-text="out"></span>
+                                        </div>
                                     </template>
                                 </div>
                             </div>
-                            <div class="flex-1 p-6 border-b-4 border-slate-900">
-                                <p class="text-[10px] font-black uppercase text-slate-300 tracking-widest">Service Outcomes</p>
+                            <div class="flex-1 p-4 border-b border-black">
+                                <p class="text-[11px] font-bold uppercase text-black tracking-widest">Service Outcomes</p>
                             </div>
-                            <div class="flex-1 p-6">
-                                <p class="text-[10px] font-black uppercase text-slate-300 tracking-widest">Clinical Outcomes</p>
+                            <div class="flex-1 p-4">
+                                <p class="text-[11px] font-bold uppercase text-black tracking-widest">Clinical Outcomes</p>
                             </div>
                         </div>
                     </div>
@@ -363,7 +357,7 @@
                 items: [],
                 selectedStrategies: [],
                 hoveredId: null,
-                newItem: { construct: 'Capability', impact: 5, feasibility: 5, frequency: 3, duration: 3, desc: '', rating: 20 },
+                newItem: { construct: 'Capability', impact: 5, feasibility: 5, frequency: 3, duration: 3, desc: '', rating: 50 },
                 strategyModal: { open: false, strat: null, outcome: 'Fidelity', actor: 'Implementation Team', target: 'Staff', justification: '' },
                 
                 // DATA TAXONOMIES
@@ -387,7 +381,7 @@
 
                 init() {
                     // Try to load local storage
-                    const saved = localStorage.getItem('impsci-nav-full-v1');
+                    const saved = localStorage.getItem('impsci-nav-full-v2');
                     if (saved) {
                         try {
                             const d = JSON.parse(saved);
@@ -410,7 +404,7 @@
                 },
 
                 save() {
-                    localStorage.setItem('impsci-nav-full-v1', JSON.stringify({
+                    localStorage.setItem('impsci-nav-full-v2', JSON.stringify({
                         project: this.project,
                         items: this.items,
                         selectedStrategies: this.selectedStrategies
@@ -419,7 +413,7 @@
 
                 resetData() {
                     if(confirm("Are you sure you want to clear all data?")) {
-                        localStorage.removeItem('impsci-nav-full-v1');
+                        localStorage.removeItem('impsci-nav-full-v2');
                         location.reload();
                     }
                 },
@@ -456,16 +450,20 @@
 
                 getRatingColor(r) {
                     const val = parseInt(r);
-                    if (val <= 49) return "#e11d48"; // Rose-600
-                    if (val == 50) return "#94a3b8"; // Slate-400
-                    return "#059669"; // Emerald-600
+                    if (val <= 25) return "#dc2626"; // Red
+                    if (val <= 49) return "#e11d48"; // Rose
+                    if (val == 50) return "#94a3b8"; // Slate/Grey
+                    if (val <= 75) return "#22c55e"; // Light Green
+                    return "#15803d"; // Dark Green
                 },
 
                 getRatingTextColor(r) {
                     const val = parseInt(r);
+                    if (val <= 25) return "text-red-600";
                     if (val <= 49) return "text-rose-600";
                     if (val == 50) return "text-slate-400";
-                    return "text-emerald-600";
+                    if (val <= 75) return "text-green-500";
+                    return "text-green-700";
                 },
 
                 formatRating(r) {
@@ -538,20 +536,20 @@
                         .attr("stroke-width", 0)
                         .attr("class", d => this.hoveredId === d.id ? "node-pulse" : "");
 
-                    // Outer white ring (Contrast)
+                    // Outer border ring for contrast
                     nodes.append("circle")
                         .attr("r", d => radiusScale(d.frequency))
                         .attr("fill", "none")
-                        .attr("stroke", "white")
-                        .attr("stroke-width", 3);
+                        .attr("stroke", "#0f172a") // Changed to dark slate for better visibility on white grid
+                        .attr("stroke-width", 2);
 
                     // Text Label
                     nodes.append("text")
                         .text(d => d.construct)
-                        .attr("y", d => radiusScale(d.frequency) + 18)
+                        .attr("y", d => radiusScale(d.frequency) + 16)
                         .attr("text-anchor", "middle")
                         .style("font-size", "10px")
-                        .style("font-weight", "900")
+                        .style("font-weight", "800")
                         .style("fill", "#0f172a")
                         .style("paint-order", "stroke")
                         .style("stroke", "white")
@@ -566,7 +564,7 @@
                         backgroundColor: '#ffffff' 
                     });
                     const link = document.createElement('a');
-                    link.download = `IRLM_${this.project.innovation}_${new Date().toLocaleDateString()}.png`;
+                    link.download = `IRLM_${this.project.innovation || 'Figure'}_${new Date().toLocaleDateString().replace(/\//g, '-')}.png`;
                     link.href = dataUrl;
                     link.click();
                 }
