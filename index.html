@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ImpSci Navigator</title>
+    <title>ImpSci Navigator: Advanced Assessment</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
@@ -13,18 +13,9 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], },
                     colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0ea5e9',
-                            600: '#0284c7', 
-                            700: '#0369a1',
-                            900: '#0c4a6e',
-                        }
+                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e', }
                     },
                     boxShadow: {
                         'glass': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
@@ -39,84 +30,35 @@
         [x-cloak] { display: none !important; }
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
         
-        /* Premium Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Matrix Canvas - Minimalist Grid */
         .matrix-container { 
             cursor: crosshair; 
             background-color: #ffffff;
-            background-image: 
-                linear-gradient(#f1f5f9 1.5px, transparent 1.5px),
-                linear-gradient(90deg, #f1f5f9 1.5px, transparent 1.5px);
+            background-image: linear-gradient(#f1f5f9 1.5px, transparent 1.5px), linear-gradient(90deg, #f1f5f9 1.5px, transparent 1.5px);
             background-size: 40px 40px; 
             background-position: center center;
         }
         
-        /* Interactive Elements */
-        .glass-panel { 
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(16px); 
-            -webkit-backdrop-filter: blur(16px); 
-        }
+        .glass-panel { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 
-        /* Custom Range Slider */
-        input[type=range] { 
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            background: #e2e8f0;
-            border-radius: 999px;
-            outline: none;
-        }
+        input[type=range] { -webkit-appearance: none; width: 100%; height: 6px; background: #e2e8f0; border-radius: 999px; outline: none; }
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #ffffff;
-            cursor: pointer;
-            border-radius: 50%;
-            border: 2px solid #0284c7;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-            transition: transform 0.1s;
+            -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: #ffffff;
+            cursor: pointer; border-radius: 50%; border: 2px solid #0284c7; box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: transform 0.1s;
         }
-        input[type=range]::-webkit-slider-thumb:hover {
-            transform: scale(1.1);
-        }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.1); }
 
-        /* Tooltips */
         .help-tooltip {
-            position: absolute;
-            z-index: 60;
-            background: #1e293b;
-            color: #f8fafc;
-            padding: 12px 16px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 500;
-            line-height: 1.5;
-            width: 240px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s, transform 0.2s;
-            transform: translateY(4px);
+            position: absolute; z-index: 60; background: #1e293b; color: #f8fafc; padding: 12px 16px; border-radius: 10px;
+            font-size: 12px; font-weight: 500; line-height: 1.5; width: 240px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            pointer-events: none; opacity: 0; transition: opacity 0.2s, transform 0.2s; transform: translateY(4px);
         }
-        .group:hover .help-tooltip {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        #matrix-tooltip {
-            pointer-events: none;
-            transition: opacity 0.15s ease-out;
-            z-index: 100;
-        }
-
+        .group:hover .help-tooltip { opacity: 1; transform: translateY(0); }
+        #matrix-tooltip { pointer-events: none; transition: opacity 0.15s ease-out; z-index: 100; }
         .sidebar-transition { transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
 
         @media print {
@@ -129,77 +71,136 @@
 </head>
 <body class="h-full flex flex-col overflow-hidden text-slate-900" x-data="prepApp" x-init="init()">
 
+    <!-- PROJECT SETUP MODAL (Dynamic Tailoring) -->
+    <div x-show="!project.initialized" class="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 no-print" x-cloak>
+        <div class="bg-white rounded-2xl shadow-float max-w-lg w-full p-8 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-brand-500"></div>
+            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-2">Configure Project</h2>
+            <p class="text-sm text-slate-500 mb-6">To ensure contextual accuracy, please define the precise intervention and setting for this implementation effort.</p>
+            
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">The Innovation</label>
+                    <input type="text" x-model="project.innovation" placeholder="e.g., The Digital CBT App, New Screening Protocol..." class="w-full border border-slate-300 rounded-lg p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">The Inner Setting</label>
+                    <input type="text" x-model="project.setting" placeholder="e.g., Rural Primary Care Clinic, District 4 Schools..." class="w-full border border-slate-300 rounded-lg p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                </div>
+                <button @click="initializeProject()" :disabled="!project.innovation || !project.setting" class="w-full bg-brand-600 text-white font-bold py-3.5 rounded-lg mt-4 hover:bg-brand-700 transition-colors disabled:opacity-50 flex justify-center items-center gap-2 shadow-md">
+                    Initialize Workspace
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STRATEGY SPECIFICATION MODAL (IRLM Builder) -->
+    <div x-show="strategyModal.open" class="fixed inset-0 z-[150] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 no-print" x-cloak>
+        <div class="bg-white rounded-2xl shadow-float max-w-2xl w-full p-6 md:p-8 max-h-[90vh] overflow-y-auto" @click.away="strategyModal.open = false">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-brand-600 mb-1 block">Strategy Specification</span>
+                    <h2 class="text-xl font-bold text-slate-900 leading-tight" x-text="strategyModal.strat?.text"></h2>
+                    <p class="text-sm text-slate-500 mt-1" x-text="strategyModal.strat?.cluster"></p>
+                </div>
+                <button @click="strategyModal.open = false" class="p-2 text-slate-400 hover:bg-slate-100 rounded-full"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            
+            <p class="text-sm text-slate-600 mb-6 bg-brand-50 border border-brand-100 p-3 rounded-lg">
+                Specify exactly how this strategy will be deployed to overcome contextual barriers and achieve Proctor's implementation outcomes.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="col-span-1 md:col-span-2">
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Targeted Proctor Outcome</label>
+                    <select x-model="strategyModal.outcome" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:border-brand-500 bg-white">
+                        <option value="" disabled>Select outcome...</option>
+                        <option value="Acceptability">Acceptability (Intervention is agreeable/palatable)</option>
+                        <option value="Appropriateness">Appropriateness (Perceived fit/relevance)</option>
+                        <option value="Feasibility">Feasibility (Can it be physically carried out)</option>
+                        <option value="Adoption">Adoption (Initial decision/action to use)</option>
+                        <option value="Fidelity">Fidelity (Delivered as intended)</option>
+                        <option value="Penetration">Penetration (Integration across the organization)</option>
+                        <option value="Sustainability">Sustainability (Maintained over time)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Actor (Who does it?)</label>
+                    <input type="text" x-model="strategyModal.actor" placeholder="e.g., Clinical Champion" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Action Target (Who receives it?)</label>
+                    <input type="text" x-model="strategyModal.target" placeholder="e.g., Frontline Nurses" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Temporality & Dose</label>
+                    <input type="text" x-model="strategyModal.dose" placeholder="e.g., Weekly pre-launch, 30 mins" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Justification</label>
+                    <input type="text" x-model="strategyModal.justification" placeholder="Addresses workflow mismatch" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:border-brand-500">
+                </div>
+            </div>
+            
+            <button @click="commitStrategy()" :disabled="!strategyModal.outcome || !strategyModal.actor" class="mt-6 w-full bg-slate-900 text-white font-bold py-3 rounded-lg hover:bg-slate-800 disabled:opacity-50 transition-colors shadow-sm">
+                Add Specified Strategy to Blueprint
+            </button>
+        </div>
+    </div>
+
     <!-- STATUS OVERLAY -->
     <div class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 no-print pointer-events-none">
         <template x-for="note in notifications" :key="note.id">
-            <div x-show="true" 
-                 x-transition:enter="transition ease-out duration-300 transform"
-                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                 x-transition:leave="transition ease-in duration-200"
-                 x-transition:leave-start="opacity-100 sm:scale-100"
-                 x-transition:leave-end="opacity-0 sm:scale-95"
-                 class="bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-float flex items-center gap-3 border border-slate-700 pointer-events-auto">
+            <div x-show="true" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-float flex items-center gap-3 border border-slate-700 pointer-events-auto">
                 <div class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></div>
                 <span class="text-xs font-semibold tracking-wide" x-text="note.text"></span>
             </div>
         </template>
     </div>
 
-    <!-- REFINED HEADER -->
+    <!-- HEADER -->
     <header class="h-[72px] bg-white border-b border-slate-200 px-6 sm:px-8 flex items-center justify-between shrink-0 no-print z-50">
         <div class="flex items-center gap-4">
             <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-sm">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
             </div>
             <div>
                 <h1 class="text-base font-bold tracking-tight text-slate-900 leading-none">ImpSci Navigator</h1>
-                <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-widest mt-1">Contextual Assessment (CFIR 2.0)</p>
+                <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-widest mt-1">CFIR 2.0 & ERIC Integration</p>
             </div>
         </div>
         
         <div class="flex items-center gap-2 sm:gap-4">
-            <div class="hidden lg:flex items-center px-4 h-10 bg-slate-50 border border-slate-200 rounded-lg">
-                <div class="w-32 h-1.5 bg-slate-200 rounded-full overflow-hidden mr-3">
-                    <div class="h-full bg-brand-600 transition-all duration-700 rounded-full" :style="`width: ${progress}%`"></div>
-                </div>
-                <span class="text-xs font-bold text-slate-500 uppercase tracking-wide" x-text="Math.round(progress) + '%'"></span>
-            </div>
-            
-            <div class="h-6 w-px bg-slate-200 mx-1 hidden sm:block"></div>
-
-            <button @click="exportPNG()" class="p-2.5 text-slate-500 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors" title="Export Matrix as PNG">
+            <button @click="exportPNG()" class="p-2.5 text-slate-500 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors" title="Export Matrix">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
             </button>
-            <button @click="resetData()" class="p-2.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Reset Session Data">
+            <button @click="resetData()" class="p-2.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Reset Session">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
             </button>
             <button @click="window.print()" class="ml-2 px-5 py-2.5 bg-slate-900 text-white rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-slate-800 transition-all shadow-md active:scale-95 flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                Report
+                Export IRLM
             </button>
         </div>
     </header>
 
     <div class="flex-1 flex overflow-hidden app-container relative">
         
-        <!-- COLUMN 1: CONFIGURATION -->
-        <aside :class="leftOpen ? 'w-[360px]' : 'w-0'" class="sidebar-transition bg-white border-r border-slate-200 flex flex-col no-print shrink-0 relative z-40">
+        <!-- COLUMN 1: CFIR ASSESSMENT -->
+        <aside :class="leftOpen ? 'w-[380px]' : 'w-0'" class="sidebar-transition bg-white border-r border-slate-200 flex flex-col no-print shrink-0 relative z-40">
             
-            <!-- Toggle Button -->
             <button @click="leftOpen = !leftOpen" class="absolute -right-4 top-8 w-8 h-8 bg-white border border-slate-200 rounded-full z-50 flex items-center justify-center hover:bg-slate-50 hover:text-brand-600 transition-all shadow-md text-slate-400">
                 <svg class="w-4 h-4 transition-transform duration-300" :class="!leftOpen && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
             </button>
 
-            <div x-show="leftOpen" class="flex flex-col h-full min-w-[360px]">
+            <div x-show="leftOpen" class="flex flex-col h-full min-w-[380px]">
                 <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                     <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                        Evaluate Context
+                        Contextual Assessment
                         <div class="relative group ml-1">
                             <svg class="w-4 h-4 text-slate-400 cursor-help" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg>
-                            <div class="help-tooltip left-0 top-6">
-                                Identify implementation-related factors using CFIR 2.0. Assess whether each factor acts as a barrier or facilitator.
-                            </div>
+                            <div class="help-tooltip left-0 top-6">Map operational determinants using CFIR 2.0 and score them via multi-criteria decision analysis.</div>
                         </div>
                     </h2>
                     <span class="bg-slate-200 text-slate-700 text-xs px-2.5 py-1 rounded-full font-bold" x-text="items.length"></span>
@@ -209,100 +210,107 @@
                     <!-- ENTRY FORM -->
                     <div class="space-y-6">
                         
+                        <!-- Dynamic Scaffolding Text -->
+                        <div x-show="project.initialized" class="bg-brand-50 rounded-lg p-3 text-[11px] font-medium text-brand-800 border border-brand-100 leading-relaxed" x-cloak>
+                            Evaluating how <strong x-text="project.innovation" class="text-brand-900"></strong> integrates within <strong x-text="project.setting" class="text-brand-900"></strong>.
+                        </div>
+
                         <!-- Construct Select -->
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-slate-700 flex items-center justify-between">
-                                CFIR Construct Target
-                            </label>
+                            <label class="text-xs font-bold text-slate-700">CFIR Construct Target</label>
                             <div class="relative">
-                                <select x-model="newItem.construct" class="w-full text-sm border border-slate-300 rounded-lg p-3.5 bg-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all appearance-none cursor-pointer shadow-sm">
+                                <select x-model="newItem.construct" class="w-full text-sm border border-slate-300 rounded-lg p-3.5 bg-white focus:ring-2 focus:ring-brand-500 outline-none appearance-none cursor-pointer shadow-sm font-semibold">
                                     <option value="" disabled selected>Select contextual domain...</option>
                                     <template x-for="(list, domain) in cfirTaxonomy" :key="domain">
-                                        <optgroup :label="domain" class="font-bold text-slate-900 bg-white">
+                                        <optgroup :label="domain" class="font-bold text-slate-400 bg-white">
                                             <template x-for="item in list" :key="item">
-                                                <option :value="item" x-text="item"></option>
+                                                <option :value="item" class="text-slate-900" x-text="item"></option>
                                             </template>
                                         </optgroup>
                                     </template>
                                 </select>
                                 <svg class="w-5 h-5 text-slate-400 absolute right-3 top-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/></svg>
                             </div>
+                            
+                            <!-- Plain Language Translation Scaffolding -->
+                            <div x-show="newItem.construct" x-collapse>
+                                <div class="bg-slate-800 text-slate-100 text-xs p-3 rounded-lg mt-2 leading-relaxed border-l-4 border-brand-500 shadow-sm" x-text="cfirDefinitions[newItem.construct] || 'Provide context specifically tailored to your organization.'"></div>
+                            </div>
                         </div>
 
-                        <!-- Refined Segmented Rating Control -->
+                        <!-- Valence Evaluation -->
                         <div class="space-y-3">
                             <div class="flex justify-between items-center">
-                                <label class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                                    Valence Evaluation
-                                    <div class="relative group">
-                                        <svg class="w-4 h-4 text-slate-400 cursor-help" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg>
-                                        <div class="help-tooltip left-0 top-6">Slide to indicate if this factor hinders or helps your implementation.</div>
-                                    </div>
-                                </label>
-                                <span :class="getRatingTextColor(newItem.rating)" class="text-[11px] font-bold uppercase px-2 py-0.5 rounded bg-slate-50 border border-slate-200 shadow-sm" x-text="formatRating(newItem.rating)"></span>
+                                <label class="text-xs font-bold text-slate-700">Valence Evaluation</label>
+                                <span :class="getRatingTextColor(newItem.rating)" class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-slate-50 border shadow-sm" x-text="formatRating(newItem.rating)"></span>
                             </div>
-                            
                             <input type="range" x-model="newItem.rating" min="0" max="100" step="1" class="w-full accent-brand-600">
                             <div class="text-[10px] font-medium text-slate-400 flex justify-between px-1">
                                 <span>Barrier</span><span>Neutral</span><span>Facilitator</span>
                             </div>
                         </div>
 
-                        <!-- Impact & Equity Sliders -->
-                        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <!-- MCDA Matrix Inputs -->
+                        <div class="space-y-4 bg-slate-50/80 p-4 rounded-xl border border-slate-200 shadow-sm">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">MCDA Prioritization Criteria</label>
+                            
                             <div class="space-y-3">
-                                <label class="text-xs font-bold text-slate-600 flex justify-between items-center">
-                                    Magnitude
-                                    <span class="text-brand-600 bg-brand-50 px-2 py-0.5 rounded text-[11px]" x-text="newItem.impact"></span>
+                                <label class="text-[11px] font-bold text-slate-600 flex justify-between items-center">
+                                    Impact / Importance <span class="text-brand-600 font-bold" x-text="newItem.impact + '/10'"></span>
                                 </label>
-                                <input type="range" x-model="newItem.impact" min="1" max="10" step="1" class="w-full accent-brand-600">
-                                <div class="text-[10px] text-slate-400 flex justify-between px-1">
-                                    <span>Low</span><span>High</span>
-                                </div>
+                                <input type="range" x-model="newItem.impact" min="1" max="10" step="1" class="w-full">
                             </div>
+
                             <div class="space-y-3">
-                                <label class="text-xs font-bold text-slate-600 flex justify-between items-center">
-                                    Equity Lens
-                                    <span class="text-brand-600 bg-brand-50 px-2 py-0.5 rounded text-[11px]" x-text="newItem.equity + '%'"></span>
+                                <label class="text-[11px] font-bold text-slate-600 flex justify-between items-center">
+                                    Feasibility to Address <span class="text-brand-600 font-bold" x-text="newItem.feasibility + '/10'"></span>
                                 </label>
-                                <input type="range" x-model="newItem.equity" min="0" max="100" step="10" class="w-full accent-brand-600">
-                                <div class="text-[10px] text-slate-400 flex justify-between px-1">
-                                    <span>Min</span><span>Max</span>
+                                <input type="range" x-model="newItem.feasibility" min="1" max="10" step="1" class="w-full">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-bold text-slate-600 flex justify-between items-center">
+                                        Frequency <span class="text-slate-500" x-text="newItem.frequency"></span>
+                                    </label>
+                                    <input type="range" x-model="newItem.frequency" min="1" max="5" step="1" class="w-full">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-bold text-slate-600 flex justify-between items-center">
+                                        Duration <span class="text-slate-500" x-text="newItem.duration"></span>
+                                    </label>
+                                    <input type="range" x-model="newItem.duration" min="1" max="5" step="1" class="w-full">
                                 </div>
                             </div>
                         </div>
 
                         <!-- Details Textarea -->
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-slate-700">Qualitative Context</label>
-                            <textarea x-model="newItem.desc" placeholder="Describe local evidence, specific conditions, or observations..." class="w-full text-sm border border-slate-300 rounded-lg p-3.5 h-24 resize-none bg-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all placeholder:text-slate-400 shadow-sm"></textarea>
+                            <label class="text-xs font-bold text-slate-700">Qualitative Observation</label>
+                            <textarea x-model="newItem.desc" placeholder="Describe local evidence or specific contextual manifestations..." class="w-full text-sm border border-slate-300 rounded-lg p-3 h-20 resize-none bg-white outline-none focus:border-brand-500 shadow-sm"></textarea>
                         </div>
 
-                        <button @click="addItem()" :disabled="!newItem.desc || !newItem.construct" class="w-full bg-slate-900 text-white py-3.5 rounded-lg text-sm font-bold hover:bg-brand-600 hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:bg-slate-900 disabled:hover:translate-y-0 disabled:hover:shadow-none transition-all duration-200 flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                            Add to Matrix
+                        <button @click="addItem()" :disabled="!newItem.desc || !newItem.construct" class="w-full bg-slate-900 text-white py-3.5 rounded-lg text-sm font-bold hover:bg-brand-600 hover:shadow-lg disabled:opacity-50 transition-all duration-200 flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                            Add Determinant
                         </button>
                     </div>
 
                     <!-- INVENTORY LIST -->
-                    <div class="space-y-4 pb-12">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest border-t border-slate-200 pt-6">Captured Determinants</h3>
+                    <div class="space-y-3 pb-12">
+                        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest border-t border-slate-200 pt-6">Captured Context</h3>
                         
                         <div x-show="items.length === 0" class="text-center p-6 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50">
-                            <p class="text-sm text-slate-500">No determinants added yet.</p>
+                            <p class="text-xs text-slate-500 font-medium">No determinants mapped yet.</p>
                         </div>
 
                         <template x-for="(item, index) in items" :key="item.id">
-                            <div class="p-4 bg-white border border-slate-200 rounded-xl hover:border-brand-500 hover:shadow-md transition-all cursor-pointer group relative" @mouseenter="highlightNode(item.id)" @mouseleave="clearHighlight()">
+                            <div class="p-4 bg-white border border-slate-200 rounded-xl hover:border-brand-500 transition-all cursor-pointer group relative shadow-sm" @mouseenter="highlightNode(item.id)" @mouseleave="clearHighlight()">
                                 <div class="flex justify-between items-start mb-2 pr-6">
-                                    <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border" 
-                                          :style="{ color: getRatingColor(item.rating), borderColor: getRatingColor(item.rating) + '40', backgroundColor: getRatingColor(item.rating) + '10' }"
-                                          x-text="item.construct"></span>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border" :style="{ color: getRatingColor(item.rating), borderColor: getRatingColor(item.rating) + '40', backgroundColor: getRatingColor(item.rating) + '10' }" x-text="item.construct"></span>
                                 </div>
-                                <button @click="removeItem(index)" class="absolute top-4 right-4 text-slate-300 hover:text-red-500 transition-colors bg-white rounded-full p-1 opacity-0 group-hover:opacity-100">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                </button>
-                                <p class="text-sm text-slate-700 leading-relaxed mt-2" x-text="item.desc"></p>
+                                <button @click="removeItem(index)" class="absolute top-3 right-3 text-slate-300 hover:text-red-500 transition-colors bg-white rounded-full p-1 opacity-0 group-hover:opacity-100"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                <p class="text-xs text-slate-700 leading-relaxed mt-2" x-text="item.desc"></p>
                             </div>
                         </template>
                     </div>
@@ -310,160 +318,118 @@
             </div>
         </aside>
 
-        <!-- CENTER: VISUAL WORKSPACE -->
+        <!-- CENTER: VISUAL WORKSPACE (D3 MATRIX) -->
         <main class="flex-1 relative bg-slate-100 no-print flex flex-col min-w-0 overflow-hidden shadow-inner">
             <div class="p-4 sm:p-6 lg:p-8 h-full flex flex-col relative z-10 w-full">
-                
-                <!-- Main Board Wrapper -->
-                <div class="flex-1 bg-white rounded-2xl sm:rounded-[2rem] shadow-glass border border-slate-200 overflow-hidden relative flex flex-col">
+                <div class="flex-1 bg-white rounded-2xl shadow-glass border border-slate-200 overflow-hidden relative flex flex-col">
                     
-                    <!-- Board Header -->
                     <div class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center glass-panel z-10 gap-4 shrink-0">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-brand-50 flex items-center justify-center text-brand-600">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                            <div class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                             </div>
                             <div>
-                                <h2 class="text-sm font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                                    Strategic Matrix
-                                    <div class="relative group hidden sm:block">
-                                        <svg class="w-4 h-4 text-slate-400 cursor-help" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg>
-                                        <div class="help-tooltip left-0 top-6 font-normal">
-                                            Drag items to position them. <br><br>
-                                            <strong>Top-Right:</strong> High Priority targets triggering strategy mapping.
-                                        </div>
-                                    </div>
-                                </h2>
-                                <p class="text-[11px] text-slate-500 font-medium">Importance vs. Feasibility</p>
+                                <h2 class="text-sm font-bold text-slate-900 tracking-tight">MCDA Prioritization Matrix</h2>
+                                <p class="text-[11px] text-slate-500 font-medium">Impact vs. Feasibility "Go Zones"</p>
                             </div>
                         </div>
-                        <div class="flex gap-5">
-                            <div class="flex items-center gap-2"><div class="w-3.5 h-3.5 bg-slate-200 rounded-full border border-slate-300"></div><span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Circle Size = Magnitude</span></div>
-                            <div class="flex items-center gap-2"><div class="w-3.5 h-3.5 bg-slate-200 rounded-full opacity-40 border border-slate-300"></div><span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Opacity = Equity</span></div>
+                        <div class="flex gap-4">
+                            <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 bg-slate-300 rounded-full border border-slate-400"></div><span class="text-[10px] font-bold text-slate-500 uppercase">Size = Frequency</span></div>
+                            <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 bg-slate-300 rounded-full opacity-50 border border-slate-400"></div><span class="text-[10px] font-bold text-slate-500 uppercase">Opacity = Duration</span></div>
                         </div>
                     </div>
                     
-                    <!-- D3 VIEWPORT & AXIS WRAPPER -->
                     <div class="flex-1 relative overflow-hidden flex flex-col">
-                        
-                        <!-- Axis Labels (HTML overlay for better typography control) -->
                         <div class="absolute inset-0 pointer-events-none z-0">
-                            <!-- Y-Axis Label -->
+                            <!-- Y-Axis -->
                             <div class="absolute left-6 top-1/2 -translate-y-1/2 -rotate-90 transform origin-left text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 whitespace-nowrap flex items-center gap-2">
                                 <svg class="w-3 h-3 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                                Changeability / Feasibility
+                                Feasibility (Addressability)
                             </div>
-                            <!-- X-Axis Label -->
+                            <!-- X-Axis -->
                             <div class="absolute bottom-6 left-1/2 -translate-x-1/2 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 whitespace-nowrap flex items-center gap-2">
-                                Importance / Priority
+                                Importance (Impact)
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                             </div>
 
-                            <!-- Quadrant Backgrounds -->
-                            <div class="absolute inset-0 grid grid-cols-2 grid-rows-2 opacity-50 m-16">
-                                <!-- Top Left -->
-                                <div class="border-r-2 border-b-2 border-dashed border-slate-300 bg-slate-50/40 p-6 flex flex-col justify-start items-start rounded-tl-xl">
-                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest bg-white/80 px-2 py-1 rounded">Strategic</span>
-                                </div>
-                                <!-- Top Right (Primary) -->
-                                <div class="border-b-2 border-dashed border-slate-300 bg-brand-50/30 p-6 flex flex-col justify-start items-end rounded-tr-xl">
-                                    <span class="text-xs font-bold text-brand-600 uppercase tracking-widest bg-white/80 px-2 py-1 rounded shadow-sm border border-brand-100">Primary Focus</span>
-                                </div>
-                                <!-- Bottom Left -->
-                                <div class="border-r-2 border-dashed border-slate-300 bg-slate-100/30 p-6 flex flex-col justify-end items-start rounded-bl-xl">
-                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest bg-white/80 px-2 py-1 rounded">Monitoring</span>
-                                </div>
-                                <!-- Bottom Right -->
-                                <div class="bg-slate-50/40 p-6 flex flex-col justify-end items-end rounded-br-xl">
-                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest bg-white/80 px-2 py-1 rounded">Secondary</span>
-                                </div>
+                            <!-- Report Quadrants -->
+                            <div class="absolute inset-0 grid grid-cols-2 grid-rows-2 opacity-60 m-16 border border-slate-200 rounded-xl overflow-hidden">
+                                <div class="border-r border-b border-dashed border-slate-300 bg-slate-50/50 p-6 flex flex-col items-start"><span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/80 px-2 py-1 rounded">Secondary Targets</span></div>
+                                <div class="border-b border-dashed border-slate-300 bg-emerald-50/40 p-6 flex flex-col items-end"><span class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest bg-white/80 px-2 py-1 rounded border border-emerald-200 shadow-sm">Quick Wins (Primary Focus)</span></div>
+                                <div class="border-r border-dashed border-slate-300 bg-slate-100/40 p-6 flex flex-col justify-end items-start"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-white/80 px-2 py-1 rounded">Monitor / Filter</span></div>
+                                <div class="bg-rose-50/20 p-6 flex flex-col justify-end items-end"><span class="text-[10px] font-bold text-rose-500 uppercase tracking-widest bg-white/80 px-2 py-1 rounded">Long-term Advocacy</span></div>
                             </div>
                         </div>
 
-                        <!-- D3 Container -->
                         <div id="matrix" class="absolute inset-0 z-10 matrix-container bg-transparent"></div>
                     </div>
-
-                    <!-- CUSTOM D3 TOOLTIP -->
                     <div id="matrix-tooltip" class="absolute hidden bg-slate-900 text-white p-4 rounded-xl shadow-float border border-slate-700 w-64 opacity-0 backdrop-blur-xl"></div>
-
                 </div>
             </div>
         </main>
 
-        <!-- COLUMN 3: ALIGNMENT -->
-        <aside :class="rightOpen ? 'w-[360px]' : 'w-0'" class="sidebar-transition bg-white border-l border-slate-200 flex flex-col no-print shrink-0 relative z-40">
+        <!-- COLUMN 3: CFIR-ERIC ALIGNMENT -->
+        <aside :class="rightOpen ? 'w-[400px]' : 'w-0'" class="sidebar-transition bg-white border-l border-slate-200 flex flex-col no-print shrink-0 relative z-40">
             
-            <!-- Toggle Button -->
             <button @click="rightOpen = !rightOpen" class="absolute -left-4 top-8 w-8 h-8 bg-white border border-slate-200 rounded-full z-50 flex items-center justify-center hover:bg-slate-50 hover:text-brand-600 transition-all shadow-md text-slate-400">
                 <svg class="w-4 h-4 transition-transform duration-300" :class="rightOpen && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
             </button>
 
-            <div x-show="rightOpen" class="flex flex-col h-full min-w-[360px]">
+            <div x-show="rightOpen" class="flex flex-col h-full min-w-[400px]">
                 <div class="p-6 border-b border-slate-800 bg-slate-900 text-white">
-                    <h2 class="text-sm font-bold flex items-center gap-2">
-                        Alignment Engine
-                        <div class="relative group ml-1">
-                            <svg class="w-4 h-4 text-slate-400 cursor-help" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg>
-                            <div class="help-tooltip right-0 top-6 font-normal">
-                                Automatically maps your high-priority barriers (negative rating, high importance) to Evidence-based Implementation Strategies (ERIC).
-                            </div>
-                        </div>
-                    </h2>
-                    <p class="text-xs text-slate-400 font-medium mt-1.5">ERIC Strategy Recommendations</p>
+                    <h2 class="text-sm font-bold flex items-center gap-2">Probabilistic Engine</h2>
+                    <p class="text-[11px] text-slate-400 font-medium mt-1 leading-relaxed">Algorithmically matching high-impact barriers to the ERIC Strategy Taxonomy based on expert consensus.</p>
                 </div>
                 
                 <div class="flex-1 overflow-y-auto p-6 space-y-8 custom-scroll bg-slate-50">
                     
-                    <!-- SUGGESTED CARDS -->
+                    <!-- SUGGESTED STRATEGIES -->
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
                             <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
                                 <svg class="w-4 h-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                                 Evidence Matches
                             </h3>
-                            <span class="text-[10px] font-bold text-slate-400 bg-slate-200 px-2 py-0.5 rounded-full" x-text="suggestedStrategies.length + ' found'"></span>
+                            <span class="text-[10px] font-bold text-brand-700 bg-brand-100 px-2 py-0.5 rounded-full" x-text="suggestedStrategies.length + ' found'"></span>
                         </div>
                         
                         <div class="space-y-3">
-                            <template x-for="strat in suggestedStrategies" :key="strat">
-                                <button @click="addStrategy(strat)" class="w-full text-left p-4 rounded-xl bg-white border border-slate-200 hover:border-brand-500 hover:shadow-md transition-all duration-200 group flex justify-between items-center active:scale-95">
-                                    <span class="text-sm font-semibold text-slate-700 leading-snug group-hover:text-brand-700" x-text="strat"></span>
-                                    <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors shrink-0 ml-3">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                            <template x-for="strat in suggestedStrategies" :key="strat.text">
+                                <button @click="openStrategyModal(strat)" class="w-full text-left p-4 rounded-xl bg-white border border-slate-200 hover:border-brand-500 hover:shadow-md transition-all duration-200 group active:scale-95 flex flex-col gap-2">
+                                    <div class="flex justify-between items-start w-full">
+                                        <span class="text-sm font-bold text-slate-800 leading-snug group-hover:text-brand-700" x-text="strat.text"></span>
+                                        <div class="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors shrink-0 ml-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg></div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded" x-text="strat.consensus + '% Consensus'"></span>
+                                        <span class="text-[10px] font-medium text-slate-500 truncate" x-text="strat.cluster"></span>
                                     </div>
                                 </button>
                             </template>
                         </div>
 
-                        <!-- Empty State for Suggestions -->
                         <div x-show="suggestedStrategies.length === 0" class="py-10 text-center px-6 rounded-2xl bg-white border border-dashed border-slate-300">
-                            <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-400">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
-                            </div>
-                            <p class="text-sm text-slate-600 font-bold mb-1">No automated matches</p>
-                            <p class="text-xs text-slate-500 leading-relaxed">Add factors rated as a "Barrier" or "Strong Barrier" and move them to the Primary Focus quadrant.</p>
+                            <p class="text-sm text-slate-600 font-bold mb-1">Awaiting Priority Determinants</p>
+                            <p class="text-xs text-slate-500 leading-relaxed">Map barriers with high Importance to generate probabilistic strategy matches.</p>
                         </div>
                     </div>
 
                     <!-- SELECTED BLUEPRINT -->
                     <div class="pt-6 border-t border-slate-200">
                         <div class="flex justify-between items-center mb-5">
-                            <h3 class="text-[11px] font-bold text-slate-800 uppercase tracking-widest">Active Blueprint</h3>
-                            <span class="text-xs font-bold text-white bg-slate-800 px-2.5 py-0.5 rounded-full" x-text="selectedStrategies.length"></span>
+                            <h3 class="text-[11px] font-bold text-slate-800 uppercase tracking-widest">IRLM Blueprint</h3>
+                            <span class="text-[10px] font-bold text-white bg-slate-800 px-2 py-0.5 rounded-full" x-text="selectedStrategies.length"></span>
                         </div>
                         
-                        <div class="space-y-2.5">
-                            <div x-show="selectedStrategies.length === 0" class="text-xs text-slate-400 italic px-2">
-                                Click the + icon on a strategy above to build your blueprint.
-                            </div>
-
+                        <div class="space-y-3">
+                            <div x-show="selectedStrategies.length === 0" class="text-xs text-slate-400 italic px-2">No strategies fully specified yet.</div>
                             <template x-for="(s, idx) in selectedStrategies" :key="idx">
-                                <div class="flex items-center justify-between p-3.5 bg-brand-50 border border-brand-100 rounded-xl shadow-sm transition-all group">
-                                    <span class="text-sm font-semibold text-brand-900 leading-tight" x-text="s"></span>
-                                    <button @click="removeStrategy(idx)" class="text-brand-300 hover:text-red-500 hover:bg-white rounded-full p-1.5 transition-colors opacity-0 group-hover:opacity-100 shrink-0 ml-2">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                    </button>
+                                <div class="p-4 bg-white border-l-4 border-brand-500 rounded-r-xl shadow-sm group relative">
+                                    <button @click="removeStrategy(idx)" class="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1" x-text="s.outcome"></p>
+                                    <p class="text-sm font-bold text-slate-900 leading-tight mb-2 pr-4" x-text="s.strat.text"></p>
+                                    <p class="text-[11px] text-slate-600 mb-1"><strong>By:</strong> <span x-text="s.actor"></span> <strong>To:</strong> <span x-text="s.target"></span></p>
+                                    <p class="text-[11px] text-slate-600"><strong>Dose:</strong> <span x-text="s.dose"></span></p>
                                 </div>
                             </template>
                         </div>
@@ -473,55 +439,58 @@
         </aside>
     </div>
 
-    <!-- PRINT/PDF LAYOUT (Cleaned up for standard 8.5x11) -->
+    <!-- PRINT/PDF LAYOUT -->
     <div class="hidden print:block p-10 bg-white min-h-screen text-black">
-        <div class="border-b-4 border-slate-900 pb-8 mb-10 flex justify-between items-end">
+        <div class="border-b-4 border-slate-900 pb-6 mb-8 flex justify-between items-end">
             <div>
-                <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">Implementation Blueprint</h1>
-                <p class="text-brand-600 font-bold uppercase text-sm tracking-widest">Phase 2: Preparation Alignment</p>
+                <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 mb-1">Implementation Research Logic Model (IRLM)</h1>
+                <p class="text-brand-600 font-bold uppercase text-xs tracking-widest" x-text="`Innovation: ${project.innovation || 'Undefined'} | Setting: ${project.setting || 'Undefined'}`"></p>
             </div>
             <div class="text-right">
-                <p class="text-xs font-bold uppercase text-slate-500 tracking-wider mb-1">Generated</p>
-                <p class="font-bold text-slate-900" x-text="new Date().toLocaleDateString()"></p>
+                <p class="text-[10px] font-bold uppercase text-slate-500 tracking-wider mb-1">Generated</p>
+                <p class="text-sm font-bold text-slate-900" x-text="new Date().toLocaleDateString()"></p>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-16">
-            <!-- Left Col: Determinants -->
+        <div class="grid grid-cols-2 gap-12">
+            <!-- Left: CFIR -->
             <div>
-                <div class="bg-slate-900 text-white px-4 py-2 inline-block mb-8">
-                    <h2 class="text-xs font-bold uppercase tracking-widest">1. Captured Determinants</h2>
-                </div>
-                <div class="space-y-8">
+                <div class="bg-slate-900 text-white px-3 py-1.5 inline-block mb-6 rounded"><h2 class="text-[11px] font-bold uppercase tracking-widest">1. Contextual Determinants (CFIR 2.0)</h2></div>
+                <div class="space-y-6">
                     <template x-for="item in items">
-                        <div class="border-l-2 border-slate-300 pl-6 relative">
-                            <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full border-4 border-white" :style="`background: ${getRatingColor(item.rating)}`"></div>
-                            <div class="flex items-center gap-3 mb-2">
+                        <div class="border-l-2 border-slate-200 pl-4 relative">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="w-3 h-3 rounded-full shrink-0" :style="`background: ${getRatingColor(item.rating)}`"></div>
                                 <span class="text-sm font-bold uppercase text-slate-800 tracking-wide" x-text="item.construct"></span>
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 uppercase text-slate-600" x-text="formatRating(item.rating)"></span>
                             </div>
-                            <p class="text-sm text-slate-600 mb-3" x-text="item.desc"></p>
-                            <div class="flex gap-6 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                                <span>Magnitude: <span class="text-slate-800" x-text="item.impact"></span>/10</span>
-                                <span>Equity: <span class="text-slate-800" x-text="item.equity + '%'"></span></span>
+                            <p class="text-xs text-slate-600 mb-2 italic" x-text="item.desc"></p>
+                            <div class="flex gap-4 text-[9px] font-bold text-slate-400 uppercase">
+                                <span>Impact: <span class="text-slate-800" x-text="item.impact"></span>/10</span>
+                                <span>Feas: <span class="text-slate-800" x-text="item.feasibility"></span>/10</span>
+                                <span>Freq: <span class="text-slate-800" x-text="item.frequency"></span>/5</span>
+                                <span>Dur: <span class="text-slate-800" x-text="item.duration"></span>/5</span>
                             </div>
                         </div>
                     </template>
                 </div>
             </div>
-            
-            <!-- Right Col: Strategies -->
+            <!-- Right: Strategies & Outcomes -->
             <div>
-                <div class="bg-brand-600 text-white px-4 py-2 inline-block mb-8">
-                    <h2 class="text-xs font-bold uppercase tracking-widest">2. Selected Strategies</h2>
-                </div>
-                <div class="space-y-3">
+                <div class="bg-brand-600 text-white px-3 py-1.5 inline-block mb-6 rounded"><h2 class="text-[11px] font-bold uppercase tracking-widest">2. Strategies (ERIC) & Outcomes (Proctor)</h2></div>
+                <div class="space-y-5">
                     <template x-for="s in selectedStrategies">
-                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg flex gap-4 items-center">
-                            <div class="w-6 h-6 rounded bg-white border border-slate-200 text-slate-500 flex items-center justify-center font-bold text-[10px] shrink-0">
-                                <svg class="w-3 h-3 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg">
+                            <div class="flex gap-2 items-center mb-1">
+                                <span class="text-[9px] font-bold text-white bg-slate-800 px-1.5 py-0.5 rounded uppercase tracking-wider" x-text="s.outcome"></span>
+                                <span class="text-[9px] font-bold text-brand-600 bg-brand-50 px-1.5 py-0.5 rounded border border-brand-200" x-text="s.strat.cluster"></span>
                             </div>
-                            <p class="text-sm font-bold text-slate-800 leading-tight" x-text="s"></p>
+                            <p class="text-sm font-bold text-slate-800 leading-tight mb-2" x-text="s.strat.text"></p>
+                            <div class="grid grid-cols-2 gap-2 text-[10px] text-slate-700 bg-white p-2 rounded border border-slate-100">
+                                <div><strong class="text-slate-400 uppercase">Actor:</strong> <span x-text="s.actor"></span></div>
+                                <div><strong class="text-slate-400 uppercase">Target:</strong> <span x-text="s.target"></span></div>
+                                <div class="col-span-2"><strong class="text-slate-400 uppercase">Dose:</strong> <span x-text="s.dose"></span></div>
+                                <div class="col-span-2"><strong class="text-slate-400 uppercase">Mechanism:</strong> <span x-text="s.justification"></span></div>
+                            </div>
                         </div>
                     </template>
                 </div>
@@ -529,250 +498,200 @@
         </div>
     </div>
 
-    <!-- Export Infrastructure -->
-    <canvas id="export-canvas" class="hidden"></canvas>
-
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('prepApp', () => ({
+                project: { innovation: '', setting: '', initialized: false },
                 items: [],
                 selectedStrategies: [],
-                newItem: { id: null, desc: '', construct: '', rating: 50, importance: 50, changeability: 50, impact: 5, equity: 100 },
-                leftOpen: true,
-                rightOpen: true,
-                notifications: [],
+                newItem: { id: null, desc: '', construct: '', rating: 50, impact: 5, feasibility: 5, frequency: 3, duration: 3 },
+                leftOpen: true, rightOpen: true, notifications: [],
+                
+                strategyModal: { open: false, strat: null, outcome: '', actor: '', target: '', dose: '', justification: '' },
                 
                 cfirTaxonomy: {
-                    "Innovation Characteristics": ["Evidence Base", "Relative Advantage", "Adaptability", "Complexity", "Design", "Cost"],
-                    "Outer Setting": ["Patient Needs", "External Policy", "Incentives", "Local Conditions", "Peer Pressure"],
-                    "Inner Setting": ["Structural Characteristics", "Communications", "Culture", "Implementation Climate", "Readiness"],
-                    "Individuals": ["Knowledge", "Self-Efficacy", "Stage of Change", "Individual Identification"],
-                    "Process": ["Planning", "Engaging", "Executing", "Evaluating"]
+                    "Innovation": ["Innovation Adaptability", "Innovation Complexity", "Design Quality"],
+                    "Outer Setting": ["External Pressure", "Patient Needs", "Local Conditions"],
+                    "Inner Setting": ["Tension for Change", "Compatibility", "Available Resources", "Readiness"],
+                    "Individuals": ["Capability", "Motivation", "Self-Efficacy"],
+                    "Process": ["Teaming", "Engaging", "Planning"]
+                },
+                
+                cfirDefinitions: {
+                    "Innovation Adaptability": "The degree to which the new program, treatment, or tool can be modified, tailored, or refined to fit local community needs and clinical contexts.",
+                    "Innovation Complexity": "The degree to which the new program is complicated, which may be reflected by its massive scope, the number of required connections, and the sheer volume of implementation steps.",
+                    "External Pressure": "General external pressures driving the organization to implement the new program, including societal advocacy, market competition, or mandated performance metrics.",
+                    "Tension for Change": "The degree to which stakeholders within the organization believe the current situation is intolerable and desperately needs to change.",
+                    "Compatibility": "The degree to which the new program logically fits with existing workflows, legacy software systems, and established clinical processes.",
+                    "Capability": "The degree to which an individual staff member possesses the required competence, knowledge, and technical skills to fulfill their designated role.",
+                    "Motivation": "The degree to which an individual staff member is personally committed to, and enthusiastic about, fulfilling their specific implementation role.",
+                    "Teaming": "Intentionally joining together and collaborating across departmental boundaries to execute interdependent implementation tasks.",
+                    "Engaging": "Systematically attracting and encouraging active participation from those who will be delivering or receiving the new program."
                 },
 
                 ericMapping: {
-                    "Relative Advantage": ["Highlight Advantages", "Conduct Local Consensus Discussions"],
-                    "Complexity": ["Simplify Processes", "Pilot Test", "Develop Implementation Toolkits"],
-                    "Cost": ["Access New Funding", "Alter Incentive Structures"],
-                    "Patient Needs": ["Involve Patients/Consumers", "Prepare Patients/Consumers"],
-                    "External Policy": ["Change Accreditation", "Work with Policymakers"],
-                    "Culture": ["Assess Readiness", "Identify Champions", "Build a Coalition"],
-                    "Implementation Climate": ["Audit and Feedback", "Mandate Change"],
-                    "Readiness": ["Assess Readiness", "Develop Implementation Blueprint", "Conduct Educational Meetings"],
-                    "Knowledge": ["Conduct Educational Meetings", "Distribute Educational Materials"],
-                    "Self-Efficacy": ["Provide Ongoing Consultation", "Create Peer Learning Networks"],
-                    "Planning": ["Develop Implementation Blueprint", "Pilot Test", "Data-driven Strategies"]
+                    "Innovation Adaptability": [
+                        { text: "Promote adaptability of the intervention", cluster: "Adapt and Tailor to Context", consensus: 78 },
+                        { text: "Tailor strategies", cluster: "Adapt and Tailor to Context", consensus: 65 }
+                    ],
+                    "Innovation Complexity": [
+                        { text: "Develop educational materials", cluster: "Train and Educate Stakeholders", consensus: 82 },
+                        { text: "Conduct local consensus discussions", cluster: "Engage Consumers", consensus: 60 }
+                    ],
+                    "Capability": [
+                        { text: "Conduct localized educational meetings", cluster: "Train and Educate Stakeholders", consensus: 85 },
+                        { text: "Make training dynamic and interactive", cluster: "Train and Educate Stakeholders", consensus: 62 },
+                        { text: "Provide clinical supervision", cluster: "Support Clinicians", consensus: 70 }
+                    ],
+                    "Compatibility": [
+                        { text: "Assess for readiness and identify barriers", cluster: "Evaluative and Iterative Strategies", consensus: 88 },
+                        { text: "Change physical structure and equipment", cluster: "Change Infrastructure", consensus: 55 }
+                    ],
+                    "Available Resources": [
+                        { text: "Access new external funding streams", cluster: "Utilize Financial Strategies", consensus: 81 },
+                        { text: "Alter incentive/allowance structures", cluster: "Utilize Financial Strategies", consensus: 74 }
+                    ],
+                    "Teaming": [
+                        { text: "Identify and prepare champions", cluster: "Develop Stakeholder Interrelationships", consensus: 90 },
+                        { text: "Build a coalition", cluster: "Develop Stakeholder Interrelationships", consensus: 84 }
+                    ]
                 },
 
                 init() {
-                    const saved = localStorage.getItem('impsci-nav-v7-palette');
+                    const saved = localStorage.getItem('impsci-nav-v8-irlm');
                     if (saved) {
                         try {
                             const d = JSON.parse(saved);
-                            this.items = (d.items || []).map(item => {
-                                // Migrate old discrete ratings (-2 to 2) to new continuous scale (0-100)
-                                if (item.rating >= -2 && item.rating <= 2) {
-                                    const migrationMap = { "-2": 0, "-1": 26, "0": 50, "1": 75, "2": 100 };
-                                    item.rating = migrationMap[item.rating.toString()] || 50;
-                                }
-                                return item;
-                            });
+                            this.project = d.project || { innovation: '', setting: '', initialized: false };
+                            this.items = d.items || [];
                             this.selectedStrategies = d.selectedStrategies || [];
                         } catch(e) {}
                     }
-                    // Wait for layout to settle before rendering D3
                     setTimeout(() => this.renderMatrix(), 100);
-                    
                     this.$watch('items', () => { this.save(); this.renderMatrix(); });
                     this.$watch('selectedStrategies', () => this.save());
+                    this.$watch('project', () => this.save(), { deep: true });
                     
-                    // Handle window resize cleanly
                     let resizeTimer;
                     window.addEventListener('resize', () => {
-                        clearTimeout(resizeTimer);
-                        resizeTimer = setTimeout(() => this.renderMatrix(), 150);
+                        clearTimeout(resizeTimer); resizeTimer = setTimeout(() => this.renderMatrix(), 150);
                     });
-                    
-                    // Watch sidebars toggles to re-render matrix after CSS transition
                     this.$watch('leftOpen', () => setTimeout(() => this.renderMatrix(), 450));
                     this.$watch('rightOpen', () => setTimeout(() => this.renderMatrix(), 450));
                 },
 
-                save() { 
-                    localStorage.setItem('impsci-nav-v7-palette', JSON.stringify({ 
-                        items: this.items, 
-                        selectedStrategies: this.selectedStrategies 
-                    })); 
-                },
+                initializeProject() { this.project.initialized = true; this.save(); },
+                save() { localStorage.setItem('impsci-nav-v8-irlm', JSON.stringify({ project: this.project, items: this.items, selectedStrategies: this.selectedStrategies })); },
 
                 addItem() {
                     const id = Date.now();
                     this.items.push({ 
-                        ...JSON.parse(JSON.stringify(this.newItem)), 
-                        id,
-                        rating: parseInt(this.newItem.rating),
-                        impact: parseInt(this.newItem.impact),
-                        equity: parseInt(this.newItem.equity),
-                        // Drop new items near the center with slight randomness to avoid exact overlap
-                        importance: 45 + Math.random() * 10,
-                        changeability: 45 + Math.random() * 10 
+                        ...JSON.parse(JSON.stringify(this.newItem)), id,
+                        rating: parseInt(this.newItem.rating), impact: parseInt(this.newItem.impact),
+                        feasibility: parseInt(this.newItem.feasibility), frequency: parseInt(this.newItem.frequency), duration: parseInt(this.newItem.duration),
                     });
-                    this.notify("Determinant added successfully");
-                    
-                    // Reset form defaults but keep sliders neutral
-                    this.newItem.desc = '';
-                    this.newItem.construct = '';
-                    this.newItem.rating = 50;
-                    this.newItem.impact = 5;
-                    this.newItem.equity = 100;
+                    this.notify("Determinant documented");
+                    this.newItem.desc = ''; this.newItem.construct = '';
+                    this.newItem.rating = 50; this.newItem.impact = 5; this.newItem.feasibility = 5; this.newItem.frequency = 3; this.newItem.duration = 3;
                 },
 
-                removeItem(idx) { 
-                    this.items.splice(idx, 1); 
-                    this.notify("Determinant removed");
-                },
+                removeItem(idx) { this.items.splice(idx, 1); this.notify("Determinant removed"); },
 
                 resetData() { 
-                    if(confirm("Are you sure you want to clear your entire blueprint? This cannot be undone.")) { 
-                        this.items = []; 
-                        this.selectedStrategies = []; 
-                        localStorage.removeItem('impsci-nav-v7-palette'); 
-                        this.notify("Session reset");
+                    if(confirm("Clear entire project workspace? This cannot be undone.")) { 
+                        this.items = []; this.selectedStrategies = []; this.project = { innovation: '', setting: '', initialized: false };
+                        localStorage.removeItem('impsci-nav-v8-irlm'); this.notify("Session reset");
                     }
                 },
 
-                addStrategy(s) { 
-                    if(!this.selectedStrategies.includes(s)) {
-                        this.selectedStrategies.push(s);
-                        this.notify("Strategy added to blueprint");
-                    }
+                openStrategyModal(strat) {
+                    this.strategyModal = { open: true, strat: strat, outcome: '', actor: '', target: '', dose: '', justification: '' };
                 },
 
-                removeStrategy(idx) { 
-                    this.selectedStrategies.splice(idx, 1); 
+                commitStrategy() {
+                    this.selectedStrategies.push(JSON.parse(JSON.stringify(this.strategyModal)));
+                    this.strategyModal.open = false;
+                    this.notify("Strategy mapped to IRLM");
                 },
+
+                removeStrategy(idx) { this.selectedStrategies.splice(idx, 1); },
 
                 notify(text) {
-                    const id = Date.now();
-                    this.notifications.push({ id, text });
-                    setTimeout(() => {
-                        this.notifications = this.notifications.filter(n => n.id !== id);
-                    }, 3000);
-                },
-
-                get progress() {
-                    let p = 0;
-                    if (this.items.length > 0) p += 25;
-                    if (this.items.length >= 3) p += 25;
-                    // Check if they've dragged items into priority zones (> 50 importance)
-                    if (this.items.some(i => i.importance > 50)) p += 25;
-                    if (this.selectedStrategies.length > 0) p += 25;
-                    return Math.min(100, p);
+                    const id = Date.now(); this.notifications.push({ id, text });
+                    setTimeout(() => { this.notifications = this.notifications.filter(n => n.id !== id); }, 3000);
                 },
 
                 getRatingColor(r) {
                     const val = parseInt(r);
-                    if (val <= 25) return "#e11d48"; // Rose 600 - Strong Barrier
-                    if (val <= 49) return "#fb7185"; // Rose 400 - Barrier
-                    if (val === 50) return "#94a3b8"; // Slate 400 - Neutral
-                    if (val <= 75) return "#34d399"; // Emerald 400 - Facilitator
-                    return "#059669"; // Emerald 600 - Strong Facilitator
+                    if (val <= 25) return "#e11d48"; if (val <= 49) return "#fb7185";
+                    if (val === 50) return "#94a3b8";
+                    if (val <= 75) return "#34d399"; return "#059669";
                 },
-
                 getRatingTextColor(r) {
                     const val = parseInt(r);
-                    if (val <= 25) return "text-rose-600";
-                    if (val <= 49) return "text-rose-500";
+                    if (val <= 25) return "text-rose-600"; if (val <= 49) return "text-rose-500";
                     if (val === 50) return "text-slate-500";
-                    if (val <= 75) return "text-emerald-500";
-                    return "text-emerald-600";
+                    if (val <= 75) return "text-emerald-500"; return "text-emerald-600";
                 },
-
                 formatRating(r) {
                     const val = parseInt(r);
-                    if (val <= 25) return "Strong Barrier";
-                    if (val <= 49) return "Barrier";
+                    if (val <= 25) return "Strong Barrier"; if (val <= 49) return "Barrier";
                     if (val === 50) return "Neutral";
-                    if (val <= 75) return "Facilitator";
-                    return "Strong Facilitator";
+                    if (val <= 75) return "Facilitator"; return "Strong Facilitator";
                 },
 
                 get suggestedStrategies() {
-                    // Triggers if item is a barrier (<= 49) and in high importance half (> 50)
-                    const priorityConstructs = [...new Set(this.items.filter(i => i.rating <= 49 && i.importance > 50).map(i => i.construct))];
+                    // Match rules: barrier (rating <=49), impact > 5
+                    const priorityConstructs = [...new Set(this.items.filter(i => i.rating <= 49 && i.impact > 5).map(i => i.construct))];
                     let res = [];
-                    priorityConstructs.forEach(c => { 
-                        if(this.ericMapping[c]) res = [...res, ...this.ericMapping[c]]; 
-                    });
-                    return [...new Set(res)].filter(s => !this.selectedStrategies.includes(s)).slice(0, 10);
+                    priorityConstructs.forEach(c => { if(this.ericMapping[c]) res = [...res, ...this.ericMapping[c]]; });
+                    
+                    // Deduplicate and filter out already fully selected ones (by text)
+                    const selectedTexts = this.selectedStrategies.map(s => s.strat.text);
+                    const uniqueRes = Array.from(new Set(res.map(s => s.text))).map(text => res.find(s => s.text === text));
+                    
+                    return uniqueRes.filter(s => !selectedTexts.includes(s.text)).sort((a,b) => b.consensus - a.consensus).slice(0, 8);
                 },
 
                 renderMatrix() {
                     const container = document.getElementById('matrix');
                     const tooltip = d3.select("#matrix-tooltip");
-                    if (!container) return;
+                    if (!container) return; container.innerHTML = '';
                     
-                    // Clean previous SVG entirely
-                    container.innerHTML = '';
-                    
-                    const width = container.clientWidth;
-                    const height = container.clientHeight;
-                    
-                    // Don't render if container is hidden/0 size
+                    const width = container.clientWidth; const height = container.clientHeight;
                     if(width === 0 || height === 0) return;
 
-                    // Margin handles the space for nodes so they don't clip at edges
                     const margin = 64; 
+                    const svg = d3.select("#matrix").append("svg").attr("id", "matrix-svg").attr("width", "100%").attr("height", "100%")
+                                  .style("position", "absolute").style("top", "0").style("left", "0");
 
-                    const svg = d3.select("#matrix").append("svg")
-                        .attr("id", "matrix-svg")
-                        .attr("width", "100%")
-                        .attr("height", "100%")
-                        .style("position", "absolute")
-                        .style("top", "0")
-                        .style("left", "0");
-
-                    const x = d3.scaleLinear().domain([0, 100]).range([margin, width - margin]);
-                    const y = d3.scaleLinear().domain([0, 100]).range([height - margin, margin]);
+                    // Map 1-10 scores to the graph axes
+                    const x = d3.scaleLinear().domain([0, 10]).range([margin, width - margin]);
+                    const y = d3.scaleLinear().domain([0, 10]).range([height - margin, margin]);
                     
-                    // Adjusted scale to look cleaner
-                    const radiusScale = d3.scaleLinear().domain([1, 10]).range([14, 38]);
-                    const opacityScale = d3.scaleLinear().domain([0, 100]).range([0.3, 1]);
+                    // Size = Frequency (1-5), Opacity = Duration (1-5)
+                    const radiusScale = d3.scaleLinear().domain([1, 5]).range([12, 32]);
+                    const opacityScale = d3.scaleLinear().domain([1, 5]).range([0.4, 1]);
 
-                    // Add central axes lines inside SVG (matches grid)
-                    svg.append("line").attr("x1", x(50)).attr("y1", margin).attr("x2", x(50)).attr("y2", height - margin)
-                        .attr("stroke", "#cbd5e1").attr("stroke-width", 2).attr("stroke-dasharray", "6,6");
-                    svg.append("line").attr("x1", margin).attr("y1", y(50)).attr("x2", width - margin).attr("y2", y(50))
-                        .attr("stroke", "#cbd5e1").attr("stroke-width", 2).attr("stroke-dasharray", "6,6");
+                    svg.append("line").attr("x1", x(5)).attr("y1", margin).attr("x2", x(5)).attr("y2", height - margin).attr("stroke", "#cbd5e1").attr("stroke-width", 2).attr("stroke-dasharray", "6,6");
+                    svg.append("line").attr("x1", margin).attr("y1", y(5)).attr("x2", width - margin).attr("y2", y(5)).attr("stroke", "#cbd5e1").attr("stroke-width", 2).attr("stroke-dasharray", "6,6");
 
-                    // Render Nodes
                     const node = svg.selectAll(".node").data(this.items).enter().append("g")
                         .attr("class", "node cursor-move")
-                        .attr("transform", d => `translate(${x(d.importance)},${y(d.changeability)})`)
+                        .attr("transform", d => `translate(${x(d.impact)},${y(d.feasibility)})`)
                         .attr("id", d => `node-${d.id}`)
-                        .style("opacity", d => opacityScale(d.equity))
+                        .style("opacity", d => opacityScale(d.duration))
                         .call(d3.drag()
-                            .on("start", function(event) {
-                                tooltip.style("opacity", 0);
-                                d3.select(this).raise(); // Bring to front
-                                d3.select(this).select("circle").attr("stroke-width", 5);
-                            })
+                            .on("start", function() { tooltip.style("opacity", 0); d3.select(this).raise(); d3.select(this).select("circle").attr("stroke-width", 5); })
                             .on("drag", (event, d) => {
-                                // Constrain to grid
-                                d.importance = Math.max(0, Math.min(100, x.invert(event.x)));
-                                d.changeability = Math.max(0, Math.min(100, y.invert(event.y)));
-                                d3.select(`#node-${d.id}`).attr("transform", `translate(${x(d.importance)},${y(d.changeability)})`);
+                                d.impact = Math.max(0, Math.min(10, x.invert(event.x)));
+                                d.feasibility = Math.max(0, Math.min(10, y.invert(event.y)));
+                                d3.select(`#node-${d.id}`).attr("transform", `translate(${x(d.impact)},${y(d.feasibility)})`);
                             })
-                            .on("end", function(event, d) {
-                                d3.select(this).select("circle").attr("stroke-width", 3);
-                                // Alpine handles reactivity, but we manually trigger save
-                                Alpine.raw(this).__x.$data.save();
-                            })
+                            .on("end", function() { d3.select(this).select("circle").attr("stroke-width", 3); Alpine.raw(this).__x.$data.save(); })
                         )
                         .on("mouseover", (event, d) => {
                             this.highlightNode(d.id);
-                            
-                            // Rich HTML Tooltip
                             tooltip.style("opacity", 1).style("display", "block").html(`
                                 <div class="space-y-3">
                                     <div class="flex items-center gap-2 border-b border-slate-700 pb-2">
@@ -780,106 +699,53 @@
                                         <p class="text-[10px] font-bold uppercase text-brand-400 tracking-widest leading-none">${d.construct}</p>
                                     </div>
                                     <p class="text-sm font-medium leading-snug text-slate-100">${d.desc}</p>
-                                    <div class="flex flex-col gap-1.5 pt-2 border-t border-slate-700">
-                                        <div class="flex justify-between text-[11px] font-medium">
-                                            <span class="text-slate-400">Classification</span>
-                                            <span style="color: ${this.getRatingColor(d.rating)}">${this.formatRating(d.rating)}</span>
-                                        </div>
-                                        <div class="flex justify-between text-[11px] font-medium">
-                                            <span class="text-slate-400">Magnitude (Size)</span>
-                                            <span class="text-white">${d.impact}/10</span>
-                                        </div>
-                                        <div class="flex justify-between text-[11px] font-medium">
-                                            <span class="text-slate-400">Equity (Opacity)</span>
-                                            <span class="text-white">${d.equity}%</span>
-                                        </div>
+                                    <div class="flex flex-col gap-1 pt-2 border-t border-slate-700 text-[11px] font-medium">
+                                        <div class="flex justify-between"><span class="text-slate-400">Class</span><span style="color: ${this.getRatingColor(d.rating)}">${this.formatRating(d.rating)}</span></div>
+                                        <div class="flex justify-between"><span class="text-slate-400">Impact (X)</span><span class="text-white">${d.impact.toFixed(1)}/10</span></div>
+                                        <div class="flex justify-between"><span class="text-slate-400">Feas (Y)</span><span class="text-white">${d.feasibility.toFixed(1)}/10</span></div>
+                                        <div class="flex justify-between"><span class="text-slate-400">Freq (Size)</span><span class="text-white">${d.frequency}/5</span></div>
+                                        <div class="flex justify-between"><span class="text-slate-400">Dur (Opacity)</span><span class="text-white">${d.duration}/5</span></div>
                                     </div>
                                 </div>
                             `);
                         })
                         .on("mousemove", (event) => {
                             const [mX, mY] = d3.pointer(event, container);
-                            // Position tooltip dynamically to avoid clipping
-                            let left = mX + 20;
-                            let top = mY - 20;
-                            if (left + 260 > width) left = mX - 280; // Flip left
-                            if (top + 150 > height) top = height - 150; // Keep in bounds
-                            
+                            let left = mX + 20; let top = mY - 20;
+                            if (left + 260 > width) left = mX - 280; if (top + 150 > height) top = height - 150; 
                             tooltip.style("left", left + "px").style("top", top + "px");
                         })
-                        .on("mouseout", () => {
-                            this.clearHighlight();
-                            tooltip.style("opacity", 0).style("display", "none");
-                        });
+                        .on("mouseout", () => { this.clearHighlight(); tooltip.style("opacity", 0).style("display", "none"); });
 
-                    // The Circle representing the node
-                    node.append("circle")
-                        .attr("r", d => radiusScale(d.impact))
-                        .attr("fill", d => this.getRatingColor(d.rating))
-                        .attr("stroke", "#ffffff")
-                        .attr("stroke-width", 3)
-                        .style("filter", "drop-shadow(0 4px 6px rgba(0,0,0,0.1))")
-                        .style("transition", "stroke-width 0.2s");
+                    node.append("circle").attr("r", d => radiusScale(d.frequency)).attr("fill", d => this.getRatingColor(d.rating))
+                        .attr("stroke", "#ffffff").attr("stroke-width", 3).style("filter", "drop-shadow(0 4px 6px rgba(0,0,0,0.1))").style("transition", "stroke-width 0.2s");
 
-                    // Label below circle
-                    node.append("text")
-                        .attr("y", d => radiusScale(d.impact) + 14) // Position below
-                        .attr("text-anchor", "middle")
-                        .style("font-size", "11px")
-                        .style("font-family", "Inter, sans-serif")
-                        .style("font-weight", "700")
-                        .style("fill", "#0f172a")
-                        // Add white text outline for readability against grid
-                        .style("paint-order", "stroke")
-                        .style("stroke", "#ffffff")
-                        .style("stroke-width", "4px")
-                        .style("pointer-events", "none")
-                        .text(d => d.construct.split(" ")[0]); // Show only first word for space
+                    node.append("text").attr("y", d => radiusScale(d.frequency) + 14).attr("text-anchor", "middle")
+                        .style("font-size", "10px").style("font-family", "Inter, sans-serif").style("font-weight", "800")
+                        .style("fill", "#0f172a").style("paint-order", "stroke").style("stroke", "#ffffff").style("stroke-width", "4px")
+                        .style("pointer-events", "none").text(d => d.construct.split(" ")[0]);
                 },
 
-                highlightNode(id) { 
-                    d3.select(`#node-${id}`).style("opacity", 1);
-                    d3.select(`#node-${id} circle`).attr("stroke", "#0ea5e9").attr("stroke-width", 4); 
-                },
-
+                highlightNode(id) { d3.select(`#node-${id}`).style("opacity", 1); d3.select(`#node-${id} circle`).attr("stroke", "#0ea5e9").attr("stroke-width", 4); },
                 clearHighlight() { 
-                    const opacityScale = d3.scaleLinear().domain([0, 100]).range([0.3, 1]);
-                    d3.selectAll(".node").style("opacity", d => opacityScale(d.equity));
+                    const opacityScale = d3.scaleLinear().domain([1, 5]).range([0.4, 1]);
+                    d3.selectAll(".node").style("opacity", d => opacityScale(d.duration));
                     d3.selectAll("circle").attr("stroke", "#ffffff").attr("stroke-width", 3); 
                 },
 
                 exportPNG() {
                     const svgElement = document.getElementById('matrix-svg');
-                    const matrixWrapper = document.querySelector('.matrix-container').parentElement;
-                    
                     if (!svgElement) return;
-                    
-                    // A quick approach to get the grid background and overlay elements
-                    // Because taking exact HTML to Canvas requires html2canvas, we'll fall back 
-                    // to saving the pure SVG, which is technically more robust here.
-                    
                     const serializer = new XMLSerializer();
                     let source = serializer.serializeToString(svgElement);
-                    
-                    if (!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
-                        source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
-                    }
-                    
-                    // Add background style to SVG specifically for export so it's not transparent
+                    if (!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
                     source = source.replace('<svg', '<svg style="background-color: #f8fafc;"');
 
                     const svgBlob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
                     const url = URL.createObjectURL(svgBlob);
-                    
-                    const downloadLink = document.createElement('a');
-                    downloadLink.href = url;
-                    downloadLink.download = 'Strategic-Matrix.svg'; // Changed to SVG for better quality
-                    document.body.appendChild(downloadLink);
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
-                    URL.revokeObjectURL(url);
-                    
-                    this.notify("Matrix exported as SVG");
+                    const downloadLink = document.createElement('a'); downloadLink.href = url; downloadLink.download = 'MCDA-Matrix.svg';
+                    document.body.appendChild(downloadLink); downloadLink.click(); document.body.removeChild(downloadLink);
+                    URL.revokeObjectURL(url); this.notify("Matrix exported as SVG");
                 }
             }));
         });
