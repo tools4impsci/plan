@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ImpSci Navigator | Preparation Phase</title>
+    <title>ImpSci Navigator</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
@@ -216,7 +216,7 @@
                             </label>
                             <div class="relative">
                                 <select x-model="newItem.construct" class="w-full text-sm border border-slate-300 rounded-lg p-3.5 bg-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all appearance-none cursor-pointer shadow-sm">
-                                    <option value="" disabled selected>Select determinant framework...</option>
+                                    <option value="" disabled selected>Select contextual domain...</option>
                                     <template x-for="(list, domain) in cfirTaxonomy" :key="domain">
                                         <optgroup :label="domain" class="font-bold text-slate-900 bg-white">
                                             <template x-for="item in list" :key="item">
