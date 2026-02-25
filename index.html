@@ -35,12 +35,16 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        .matrix-container { 
-            cursor: crosshair; 
+        /* Subtle grid moved to the background */
+        .matrix-bg {
             background-color: #ffffff;
-            background-image: linear-gradient(#f1f5f9 1.5px, transparent 1.5px), linear-gradient(90deg, #f1f5f9 1.5px, transparent 1.5px);
+            background-image: linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
             background-size: 40px 40px; 
             background-position: center center;
+        }
+
+        .matrix-container { 
+            cursor: crosshair; 
         }
         
         .glass-panel { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
@@ -327,7 +331,7 @@
         <!-- CENTER: VISUAL WORKSPACE (D3 MATRIX) -->
         <main class="flex-1 relative bg-slate-100 no-print flex flex-col min-w-0 overflow-hidden shadow-inner">
             <div class="p-4 sm:p-6 lg:p-8 h-full flex flex-col relative z-10 w-full">
-                <div class="flex-1 bg-white rounded-2xl shadow-glass border border-slate-200 overflow-hidden relative flex flex-col">
+                <div class="flex-1 bg-white rounded-2xl shadow-glass border border-slate-200 overflow-hidden relative flex flex-col matrix-bg">
                     
                     <div class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center glass-panel z-10 gap-4 shrink-0">
                         <div class="flex items-center gap-3">
@@ -367,7 +371,7 @@
                             </div>
                         </div>
 
-                        <div id="matrix" class="absolute inset-0 z-10 matrix-container bg-transparent"></div>
+                        <div id="matrix" class="absolute inset-0 z-10 matrix-container"></div>
                     </div>
                     <div id="matrix-tooltip" class="absolute hidden bg-slate-900 text-white p-4 rounded-xl shadow-float border border-slate-700 w-64 opacity-0 backdrop-blur-xl"></div>
                 </div>
