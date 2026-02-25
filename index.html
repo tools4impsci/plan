@@ -133,13 +133,15 @@
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <div class="flex justify-between items-center mb-2">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase">Valence (Rating)</label>
-                            <span :class="getRatingTextColor(newItem.rating)" class="text-[10px] font-black uppercase tracking-wider" x-text="formatRating(newItem.rating)"></span>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <label class="text-xs font-bold text-slate-700">Valence Evaluation</label>
+                            <span :class="getRatingTextColor(newItem.rating)" class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-slate-50 border shadow-sm" x-text="formatRating(newItem.rating)"></span>
                         </div>
-                        <input type="range" min="0" max="100" step="1" x-model="newItem.rating" class="w-full h-2 bg-gradient-to-r from-red-500 via-slate-400 to-green-600 rounded-lg appearance-none cursor-pointer">
-                        <div class="flex justify-between text-[9px] font-bold text-slate-300 uppercase mt-1"><span>Barrier</span><span>Neutral</span><span>Facilitator</span></div>
+                        <input type="range" x-model="newItem.rating" min="0" max="100" step="1" class="w-full accent-brand-600">
+                        <div class="text-[10px] font-medium text-slate-400 flex justify-between px-1">
+                            <span>Barrier</span><span>Neutral</span><span>Facilitator</span>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-5">
@@ -450,20 +452,16 @@
 
                 getRatingColor(r) {
                     const val = parseInt(r);
-                    if (val <= 25) return "#dc2626"; // Red
-                    if (val <= 49) return "#e11d48"; // Rose
-                    if (val == 50) return "#94a3b8"; // Slate/Grey
-                    if (val <= 75) return "#22c55e"; // Light Green
-                    return "#15803d"; // Dark Green
+                    if (val <= 25) return "#e11d48"; if (val <= 49) return "#fb7185";
+                    if (val === 50) return "#94a3b8";
+                    if (val <= 75) return "#34d399"; return "#059669";
                 },
 
                 getRatingTextColor(r) {
                     const val = parseInt(r);
-                    if (val <= 25) return "text-red-600";
-                    if (val <= 49) return "text-rose-600";
-                    if (val == 50) return "text-slate-400";
-                    if (val <= 75) return "text-green-500";
-                    return "text-green-700";
+                    if (val <= 25) return "text-rose-600"; if (val <= 49) return "text-rose-500";
+                    if (val === 50) return "text-slate-500";
+                    if (val <= 75) return "text-emerald-500"; return "text-emerald-600";
                 },
 
                 formatRating(r) {
