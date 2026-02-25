@@ -37,7 +37,6 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Subtle grid moved to the background */
         .matrix-bg {
             background-color: #ffffff;
             background-image: linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
@@ -67,17 +66,6 @@
         #matrix-tooltip { pointer-events: none; transition: opacity 0.15s ease-out; z-index: 100; }
         .sidebar-transition { transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
 
-        /* Custom styles for IRLM text rotation */
-        .vertical-text-left {
-            transform: rotate(-90deg);
-            white-space: nowrap;
-            display: block;
-        }
-        .vertical-text-right {
-            transform: rotate(90deg);
-            white-space: nowrap;
-            display: block;
-        }
         .vertical-text { 
             transform: rotate(-90deg); 
             white-space: nowrap; 
@@ -95,7 +83,7 @@
 </head>
 <body class="h-full flex flex-col overflow-hidden text-slate-900" x-data="prepApp" x-init="init()">
 
-    <!-- PROJECT SETUP MODAL (Dynamic Tailoring) -->
+    <!-- PROJECT SETUP MODAL -->
     <div x-show="!project.initialized" class="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 no-print" x-cloak>
         <div class="bg-white rounded-2xl shadow-float max-w-lg w-full p-8 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-brand-500"></div>
@@ -119,7 +107,7 @@
         </div>
     </div>
 
-    <!-- STRATEGY SPECIFICATION MODAL (IRLM Builder) -->
+    <!-- STRATEGY SPECIFICATION MODAL -->
     <div x-show="strategyModal.open" class="fixed inset-0 z-[150] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 no-print" x-cloak>
         <div class="bg-white rounded-2xl shadow-float max-w-2xl w-full p-6 md:p-8 max-h-[90vh] overflow-y-auto" @click.away="strategyModal.open = false">
             <div class="flex justify-between items-start mb-4">
@@ -213,7 +201,6 @@
         
         <!-- COLUMN 1: CFIR ASSESSMENT -->
         <aside :class="leftOpen ? 'w-[380px]' : 'w-0'" class="sidebar-transition bg-white border-r border-slate-200 flex flex-col no-print shrink-0 relative z-40">
-            
             <button @click="leftOpen = !leftOpen" class="absolute -right-4 top-8 w-8 h-8 bg-white border border-slate-200 rounded-full z-50 flex items-center justify-center hover:bg-slate-50 hover:text-brand-600 transition-all shadow-md text-slate-400">
                 <svg class="w-4 h-4 transition-transform duration-300" :class="!leftOpen && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
             </button>
@@ -231,19 +218,16 @@
                 </div>
                 
                 <div class="flex-1 overflow-y-auto custom-scroll p-6 space-y-8">
-                    <!-- ENTRY FORM -->
                     <div class="space-y-6">
-                        
-                        <!-- Dynamic Scaffolding Text -->
                         <div x-show="project.initialized" class="bg-brand-50 rounded-lg p-3 text-[11px] font-medium text-brand-800 border border-brand-100 leading-relaxed" x-cloak>
                             Evaluating how <strong x-text="project.innovation" class="text-brand-900"></strong> integrates within <strong x-text="project.setting" class="text-brand-900"></strong>.
                         </div>
 
-                        <!-- Construct Select (Custom Dropdown) -->
+                        <!-- Construct Select -->
                         <div class="space-y-2" x-data="{ constructDropdownOpen: false }">
                             <label class="text-xs font-bold text-slate-700">CFIR Construct Target</label>
                             <div class="relative">
-                                <button type="button" @click="constructDropdownOpen = !constructDropdownOpen" @keydown.escape="constructDropdownOpen = false" class="w-full text-left text-sm border border-slate-300 rounded-lg p-3.5 bg-white focus:ring-2 focus:ring-brand-500 outline-none cursor-pointer shadow-sm font-semibold flex justify-between items-center transition-all">
+                                <button type="button" @click="constructDropdownOpen = !constructDropdownOpen" class="w-full text-left text-sm border border-slate-300 rounded-lg p-3.5 bg-white focus:ring-2 focus:ring-brand-500 outline-none cursor-pointer shadow-sm font-semibold flex justify-between items-center transition-all">
                                     <span x-text="newItem.construct || 'Select contextual domain...'" :class="!newItem.construct ? 'text-slate-500 font-normal' : 'text-slate-900'"></span>
                                     <svg class="w-5 h-5 text-slate-400 transition-transform duration-200 shrink-0 ml-2" :class="constructDropdownOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                                 </button>
@@ -261,8 +245,6 @@
                                     </template>
                                 </div>
                             </div>
-                            
-                            <!-- Plain Language Translation Scaffolding -->
                             <div x-show="newItem.construct" x-collapse>
                                 <div class="bg-slate-800 text-slate-100 text-xs p-3 rounded-lg mt-2 leading-relaxed border-l-4 border-brand-500 shadow-sm" x-text="cfirDefinitions[newItem.construct] || 'Provide context specifically tailored to your organization.'"></div>
                             </div>
@@ -348,11 +330,10 @@
             </div>
         </aside>
 
-        <!-- CENTER: VISUAL WORKSPACE (D3 MATRIX & IRLM) -->
+        <!-- CENTER: VISUAL WORKSPACE -->
         <main class="flex-1 relative bg-slate-100 no-print overflow-y-auto custom-scroll shadow-inner">
             <div class="p-4 sm:p-6 lg:p-8 flex flex-col gap-8 relative z-10 w-full min-w-max">
                 
-                <!-- ORIGINAL MATRIX WRAPPER -->
                 <div class="h-[600px] shrink-0 bg-white rounded-2xl shadow-glass border border-slate-200 overflow-hidden relative flex flex-col matrix-bg">
                     <div class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center glass-panel z-10 gap-4 shrink-0">
                         <div class="flex items-center gap-3">
@@ -383,10 +364,10 @@
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                             </div>
 
-                            <!-- Report Quadrants -->
+                            <!-- Quadrants -->
                             <div class="absolute inset-0 grid grid-cols-2 grid-rows-2 opacity-60 m-16 border border-slate-200 rounded-xl overflow-hidden">
                                 <div class="border-r border-b border-dashed border-slate-300 bg-slate-50/50 p-6 flex flex-col items-start"><span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/80 px-2 py-1 rounded">Secondary Targets</span></div>
-                                <div class="border-b border-dashed border-slate-300 bg-emerald-50/40 p-6 flex flex-col items-end"><span class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest bg-white/80 px-2 py-1 rounded border border-emerald-200 shadow-sm">Quick Wins (Primary Focus)</span></div>
+                                <div class="border-b border-dashed border-slate-300 bg-emerald-50/40 p-6 flex flex-col items-end"><span class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest bg-white/80 px-2 py-1 rounded border border-emerald-200 shadow-sm">Quick Wins</span></div>
                                 <div class="border-r border-dashed border-slate-300 bg-slate-100/40 p-6 flex flex-col justify-end items-start"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-white/80 px-2 py-1 rounded">Monitor / Filter</span></div>
                                 <div class="bg-rose-50/20 p-6 flex flex-col justify-end items-end"><span class="text-[10px] font-bold text-rose-500 uppercase tracking-widest bg-white/80 px-2 py-1 rounded">Long-term Advocacy</span></div>
                             </div>
@@ -397,176 +378,132 @@
                     <div id="matrix-tooltip" class="absolute hidden bg-slate-900 text-white p-4 rounded-xl shadow-float border border-slate-700 w-64 opacity-0 backdrop-blur-xl"></div>
                 </div>
 
-                <!-- THE ACADEMIC IRLM FIGURE (Optimized for Publication) -->
-            <div id="irlm-figure" class="bg-white p-12 w-full max-w-[1200px] mx-auto text-black rounded-2xl shadow-sm border border-slate-200">
-                <!-- FIGURE HEADER -->
-                <div class="mb-8 border-b-2 border-black pb-6">
-                    <h2 class="text-3xl font-bold text-black tracking-tight uppercase">Implementation Research Logic Model</h2>
-                    <div class="flex gap-6 mt-3 items-center">
-                        <p class="text-black font-semibold uppercase text-xs tracking-widest">Innovation: <span class="font-normal" x-text="project.innovation || 'Undefined'"></span></p>
-                        <div class="h-4 w-px bg-black"></div>
-                        <p class="text-black font-semibold uppercase text-xs tracking-widest">Setting: <span class="font-normal" x-text="project.setting || 'Undefined'"></span></p>
-                        <div class="h-4 w-px bg-black"></div>
-                        <p class="text-black font-semibold uppercase text-xs tracking-widest">Date: <span class="font-normal" x-text="new Date().toLocaleDateString()"></span></p>
+                <!-- IRLM FIGURE -->
+                <div id="irlm-figure" class="bg-white p-12 w-full max-w-[1200px] mx-auto text-black rounded-2xl shadow-sm border border-slate-200">
+                    <div class="mb-8 border-b-2 border-black pb-6">
+                        <h2 class="text-3xl font-bold text-black tracking-tight uppercase">Implementation Research Logic Model</h2>
+                        <div class="flex gap-6 mt-3 items-center">
+                            <p class="text-black font-semibold uppercase text-xs tracking-widest">Innovation: <span class="font-normal" x-text="project.innovation || 'Undefined'"></span></p>
+                            <div class="h-4 w-px bg-black"></div>
+                            <p class="text-black font-semibold uppercase text-xs tracking-widest">Setting: <span class="font-normal" x-text="project.setting || 'Undefined'"></span></p>
+                        </div>
                     </div>
-                </div>
 
-                <!-- FIGURE GRID -->
-                <div class="flex items-stretch gap-0 border-2 border-black">
-                    
-                    <!-- COLUMN 1: DETERMINANTS -->
-                    <div class="flex-1 flex flex-col border-r-2 border-black">
-                        <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Determinants</div>
-                        <div class="flex-1 flex flex-col bg-white">
-                            <template x-for="(list, domain) in cfirTaxonomy" :key="domain">
-                                <template x-if="items.filter(i => list.includes(i.construct)).length > 0">
-                                    <div class="flex border-b border-black last:border-b-0">
-                                        <div class="w-10 shrink-0 bg-slate-50 border-r border-black flex items-center justify-center py-2">
-                                            <span class="vertical-text text-[10px] font-bold uppercase text-black tracking-widest" x-text="domain"></span>
-                                        </div>
-                                        <div class="flex-1 p-4 text-xs leading-relaxed space-y-3">
-                                            <template x-for="item in items.filter(i => list.includes(i.construct))">
-                                                <div class="flex gap-3 items-start">
-                                                    <div class="w-2.5 h-2.5 rounded-full mt-1 shrink-0 border border-black" :style="`background: ${getRatingColor(item.rating)}`"></div>
-                                                    <div>
-                                                        <span class="font-bold text-black uppercase text-[10px]" x-text="item.construct"></span>: 
-                                                        <span class="text-black" x-text="item.desc"></span>
-                                                        <div class="flex gap-3 mt-1 text-[9px] font-bold text-slate-700 uppercase">
-                                                            <span>Imp: <span x-text="item.impact"></span></span>
-                                                            <span>Feas: <span x-text="item.feasibility"></span></span>
+                    <div class="flex items-stretch gap-0 border-2 border-black">
+                        <!-- DETERMINANTS -->
+                        <div class="flex-1 flex flex-col border-r-2 border-black">
+                            <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Determinants</div>
+                            <div class="flex-1 flex flex-col bg-white">
+                                <template x-for="(list, domain) in cfirTaxonomy" :key="domain">
+                                    <template x-if="items.filter(i => list.includes(i.construct)).length > 0">
+                                        <div class="flex border-b border-black last:border-b-0">
+                                            <div class="w-10 shrink-0 bg-slate-50 border-r border-black flex items-center justify-center py-2">
+                                                <span class="vertical-text text-[10px] font-bold uppercase text-black tracking-widest" x-text="domain"></span>
+                                            </div>
+                                            <div class="flex-1 p-4 text-xs leading-relaxed space-y-3">
+                                                <template x-for="item in items.filter(i => list.includes(i.construct))">
+                                                    <div class="flex gap-3 items-start">
+                                                        <div class="w-2.5 h-2.5 rounded-full mt-1 shrink-0 border border-black" :style="`background: ${getRatingColor(item.rating)}`"></div>
+                                                        <div>
+                                                            <span class="font-bold text-black uppercase text-[10px]" x-text="item.construct"></span>: 
+                                                            <span class="text-black" x-text="item.desc"></span>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </template>
+                                                </template>
+                                            </div>
                                         </div>
+                                    </template>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- STRATEGIES -->
+                        <div class="flex-1 flex flex-col border-r-2 border-black">
+                            <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Strategies</div>
+                            <div class="flex-1 p-4 space-y-4 bg-white">
+                                <template x-for="s in selectedStrategies">
+                                    <div class="p-4 bg-white border border-black text-xs relative group">
+                                        <p class="font-bold text-black uppercase tracking-tight mb-1" x-text="s.strat.text"></p>
+                                        <p class="text-slate-800 font-semibold text-[10px] uppercase mb-2" x-text="s.strat.cluster"></p>
+                                        <p class="text-black text-[10px] italic" x-text="`By: ${s.actor} → To: ${s.target}`"></p>
                                     </div>
                                 </template>
-                            </template>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- COLUMN 2: STRATEGIES -->
-                    <div class="flex-1 flex flex-col border-r-2 border-black">
-                        <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Strategies</div>
-                        <div class="flex-1 p-4 space-y-4 bg-white">
-                            <template x-for="s in selectedStrategies">
-                                <div class="p-4 bg-white border border-black text-xs relative group">
-                                    <button @click="selectedStrategies = selectedStrategies.filter(x => x !== s)" class="absolute top-2 right-2 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity no-print"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
-                                    <p class="font-bold text-black uppercase tracking-tight mb-1" x-text="s.strat.text"></p>
-                                    <p class="text-slate-800 font-semibold text-[10px] uppercase mb-2 border-b border-slate-300 pb-1 w-fit" x-text="s.strat.cluster"></p>
-                                    <p class="text-black text-[10px] italic" x-text="`By: ${s.actor} → To: ${s.target}`"></p>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-
-                    <!-- COLUMN 3: MECHANISMS -->
-                    <div class="flex-1 flex flex-col border-r-2 border-black">
-                        <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Mechanisms</div>
-                        <div class="flex-1 p-4 space-y-4 bg-white">
-                            <template x-for="s in selectedStrategies">
-                                <div class="p-4 border border-black text-xs flex items-center text-black">
-                                    <span x-text="s.justification"></span>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-
-                    <!-- COLUMN 4: OUTCOMES -->
-                    <div class="flex-1 flex flex-col bg-white">
-                        <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Outcomes</div>
-                        <div class="flex-1 flex flex-col">
-                            <template x-if="selectedStrategies.length > 0">
-                                <div class="p-4">
-                                    <p class="text-[11px] font-bold uppercase text-black mb-3 tracking-widest">Implementation Outcomes</p>
-                                    <div class="flex flex-col gap-2">
-                                        <template x-for="out in [...new Set(selectedStrategies.map(s => s.outcome))]">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-1.5 h-1.5 bg-black rounded-full"></div>
-                                                <span class="text-black text-[11px] font-semibold uppercase" x-text="out"></span>
-                                            </div>
-                                        </template>
+                        <!-- MECHANISMS -->
+                        <div class="flex-1 flex flex-col border-r-2 border-black">
+                            <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Mechanisms</div>
+                            <div class="flex-1 p-4 space-y-4 bg-white">
+                                <template x-for="s in selectedStrategies">
+                                    <div class="p-4 border border-black text-xs text-black">
+                                        <span x-text="s.justification"></span>
                                     </div>
-                                </div>
-                            </template>
-                            <template x-if="false">
-                                <div class="p-4 border-t border-black">
-                                    <p class="text-[11px] font-bold uppercase text-black tracking-widest">Service Outcomes</p>
-                                </div>
-                            </template>
-                            <template x-if="false">
-                                <div class="p-4 border-t border-black">
-                                    <p class="text-[11px] font-bold uppercase text-black tracking-widest">Clinical Outcomes</p>
-                                </div>
-                            </template>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- OUTCOMES -->
+                        <div class="flex-1 flex flex-col bg-white">
+                            <div class="text-center font-bold text-sm uppercase bg-slate-100 text-black py-2 tracking-widest border-b-2 border-black">Outcomes</div>
+                            <div class="flex-1 p-4">
+                                <template x-for="out in [...new Set(selectedStrategies.map(s => s.outcome))]">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="w-1.5 h-1.5 bg-black rounded-full"></div>
+                                        <span class="text-black text-[11px] font-semibold uppercase" x-text="out"></span>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
 
-        <!-- COLUMN 3: CFIR-ERIC ALIGNMENT -->
+        <!-- COLUMN 3: ERIC ALIGNMENT -->
         <aside :class="rightOpen ? 'w-[400px]' : 'w-0'" class="sidebar-transition bg-white border-l border-slate-200 flex flex-col no-print shrink-0 relative z-40">
-            
             <button @click="rightOpen = !rightOpen" class="absolute -left-4 top-8 w-8 h-8 bg-white border border-slate-200 rounded-full z-50 flex items-center justify-center hover:bg-slate-50 hover:text-brand-600 transition-all shadow-md text-slate-400">
                 <svg class="w-4 h-4 transition-transform duration-300" :class="rightOpen && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
             </button>
 
             <div x-show="rightOpen" class="flex flex-col h-full min-w-[400px]">
                 <div class="p-6 border-b border-slate-800 bg-slate-900 text-white">
-                    <h2 class="text-sm font-bold flex items-center gap-2">Probabilistic Strategy Engine</h2>
-                    <p class="text-[11px] text-slate-400 font-medium mt-1 leading-relaxed">Algorithmically matching high-impact barriers to the ERIC Strategy Taxonomy based on expert consensus.</p>
+                    <h2 class="text-sm font-bold flex items-center gap-2">Strategy Engine</h2>
+                    <p class="text-[11px] text-slate-400 font-medium mt-1 leading-relaxed">Algorithmically matching barriers to ERIC Taxonomy.</p>
                 </div>
                 
                 <div class="flex-1 overflow-y-auto p-6 space-y-8 custom-scroll bg-slate-50">
-                    
-                    <!-- SUGGESTED STRATEGIES -->
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
-                            <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                                <svg class="w-4 h-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                                Evidence Matches
-                            </h3>
-                            <span class="text-[10px] font-bold text-brand-700 bg-brand-100 px-2 py-0.5 rounded-full" x-text="suggestedStrategies.length + ' found'"></span>
+                            <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">Matches</h3>
+                            <span class="text-[10px] font-bold text-brand-700 bg-brand-100 px-2 py-0.5 rounded-full" x-text="suggestedStrategies.length"></span>
                         </div>
                         
                         <div class="space-y-3">
                             <template x-for="strat in suggestedStrategies" :key="strat.text">
-                                <button @click="openStrategyModal(strat)" class="w-full text-left p-4 rounded-xl bg-white border border-slate-200 hover:border-brand-500 hover:shadow-md transition-all duration-200 group active:scale-95 flex flex-col gap-2">
+                                <button @click="openStrategyModal(strat)" class="w-full text-left p-4 rounded-xl bg-white border border-slate-200 hover:border-brand-500 transition-all group active:scale-95 flex flex-col gap-2">
                                     <div class="flex justify-between items-start w-full">
-                                        <span class="text-sm font-bold text-slate-800 leading-snug group-hover:text-brand-700" x-text="strat.text"></span>
-                                        <div class="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors shrink-0 ml-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg></div>
+                                        <span class="text-sm font-bold text-slate-800 leading-snug" x-text="strat.text"></span>
+                                        <div class="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center text-slate-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg></div>
                                     </div>
                                     <div class="flex items-center gap-2">
                                         <span class="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded" x-text="strat.consensus + '% Consensus'"></span>
-                                        <span class="text-[10px] font-medium text-slate-500 truncate" x-text="strat.cluster"></span>
                                     </div>
                                 </button>
                             </template>
                         </div>
-
-                        <div x-show="suggestedStrategies.length === 0" class="py-10 text-center px-6 rounded-2xl bg-white border border-dashed border-slate-300">
-                            <p class="text-sm text-slate-600 font-bold mb-1">Awaiting Priority Determinants</p>
-                            <p class="text-xs text-slate-500 leading-relaxed">Map barriers with high Importance to generate probabilistic strategy matches.</p>
-                        </div>
                     </div>
 
-                    <!-- SELECTED BLUEPRINT -->
+                    <!-- BLUEPRINT -->
                     <div class="pt-6 border-t border-slate-200">
-                        <div class="flex justify-between items-center mb-5">
-                            <h3 class="text-[11px] font-bold text-slate-800 uppercase tracking-widest">IRLM Blueprint</h3>
-                            <span class="text-[10px] font-bold text-white bg-slate-800 px-2 py-0.5 rounded-full" x-text="selectedStrategies.length"></span>
-                        </div>
-                        
+                        <h3 class="text-[11px] font-bold text-slate-800 uppercase tracking-widest mb-5">Blueprint</h3>
                         <div class="space-y-3">
-                            <div x-show="selectedStrategies.length === 0" class="text-xs text-slate-400 italic px-2">No strategies fully specified yet.</div>
                             <template x-for="(s, idx) in selectedStrategies" :key="idx">
                                 <div class="p-4 bg-white border-l-4 border-brand-500 rounded-r-xl shadow-sm group relative">
-                                    <button @click="removeStrategy(idx)" class="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1" x-text="s.outcome"></p>
+                                    <button @click="removeStrategy(idx)" class="absolute top-2 right-2 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-1" x-text="s.outcome"></p>
                                     <p class="text-sm font-bold text-slate-900 leading-tight mb-2 pr-4" x-text="s.strat.text"></p>
-                                    <p class="text-[11px] text-slate-600 mb-1"><strong>By:</strong> <span x-text="s.actor"></span> <strong>To:</strong> <span x-text="s.target"></span></p>
-                                    <p class="text-[11px] text-slate-600"><strong>Dose:</strong> <span x-text="s.dose"></span></p>
+                                    <p class="text-[11px] text-slate-600"><strong>By:</strong> <span x-text="s.actor"></span> <strong>To:</strong> <span x-text="s.target"></span></p>
                                 </div>
                             </template>
                         </div>
@@ -579,31 +516,15 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('prepApp', () => ({
-                project: { innovation: 'Youth Readiness Intervention (YRI) via Mobile Supervision', setting: 'Secondary Schools in Western Region, Sierra Leone', initialized: true },
+                project: { innovation: 'Youth Readiness Intervention (YRI) via Mobile Supervision', setting: 'Secondary Schools in Sierra Leone', initialized: true },
                 items: [
-                    { id: 1, construct: 'Capability', rating: 20, impact: 9, feasibility: 8, frequency: 5, duration: 5, desc: 'Teachers are lay workers with no prior formal training in delivering cognitive behavioral or interpersonal mental health therapies.' },
-                    { id: 2, construct: 'Available Resources', rating: 15, impact: 10, feasibility: 7, frequency: 5, duration: 5, desc: 'Severe shortage of specialized behavioral health professionals; traditional in-person supervision involves prohibitive transportation and time costs.' },
-                    { id: 3, construct: 'Patient Needs', rating: 95, impact: 10, feasibility: 5, frequency: 5, duration: 5, desc: '98% mental health treatment gap among youth due to compounded adversity (civil war, Ebola); high unmet need for emotion regulation skills.' },
-                    { id: 4, construct: 'Compatibility', rating: 75, impact: 7, feasibility: 8, frequency: 4, duration: 4, desc: 'YRI logic fits into the school environment and can be scheduled as a weekly extracurricular activity after school or during Friday free periods.' },
-                    { id: 5, construct: 'Innovation Complexity', rating: 35, impact: 8, feasibility: 7, frequency: 5, duration: 4, desc: 'The mobile-based supervision model requires teachers to navigate an mHealth app, record audio segments, and use WhatsApp, posing tech literacy challenges.' }
+                    { id: 1, construct: 'Capability', rating: 20, impact: 9, feasibility: 8, frequency: 5, duration: 5, desc: 'Teachers are lay workers with no prior formal training in delivering mental health therapies.' },
+                    { id: 2, construct: 'Available Resources', rating: 15, impact: 10, feasibility: 7, frequency: 5, duration: 5, desc: 'Severe shortage of specialized behavioral health professionals; high travel costs.' },
+                    { id: 3, construct: 'Patient Needs', rating: 95, impact: 10, feasibility: 5, frequency: 5, duration: 5, desc: '98% mental health treatment gap among youth due to compounded adversity.' }
                 ],
-                selectedStrategies: [
-                    {
-                        strat: { text: "Conduct localized educational meetings", cluster: "Train and Educate Stakeholders", consensus: 85 },
-                        outcome: "Fidelity", actor: "YRI Expert Trainers", target: "Secondary School Teachers", dose: "10-day intensive in-person training", justification: "Builds foundational capability and competency (>70% score requirement) for lay teachers to deliver YRI accurately."
-                    },
-                    {
-                        strat: { text: "Provide clinical supervision", cluster: "Support Clinicians", consensus: 70 },
-                        outcome: "Feasibility", actor: "YRI Supervisors", target: "YRI Teacher Facilitators", dose: "Weekly 30-45 min sessions via WhatsApp", justification: "Mobile supervision mitigates resource barriers (travel time and cost) while maintaining necessary clinical oversight."
-                    },
-                    {
-                        strat: { text: "Develop educational materials", cluster: "Train and Educate Stakeholders", consensus: 82 },
-                        outcome: "Acceptability", actor: "DSTI & Program Managers", target: "YRI Teacher Facilitators", dose: "1-day tech training + app manual", justification: "Reduces the complexity of the mobile supervision model by actively training teachers on the mHealth app and WhatsApp integration."
-                    }
-                ],
+                selectedStrategies: [],
                 newItem: { id: null, desc: '', construct: '', rating: 50, impact: 5, feasibility: 5, frequency: 3, duration: 3 },
                 leftOpen: true, rightOpen: true, notifications: [],
-                
                 strategyModal: { open: false, strat: null, outcome: '', actor: '', target: '', dose: '', justification: '' },
                 
                 cfirTaxonomy: {
@@ -615,89 +536,65 @@
                 },
                 
                 cfirDefinitions: {
-                    "Innovation Adaptability": "The degree to which the new program, treatment, or tool can be modified, tailored, or refined to fit local community needs and clinical contexts.",
-                    "Innovation Complexity": "The degree to which the new program is complicated, which may be reflected by its massive scope, the number of required connections, and the sheer volume of implementation steps.",
-                    "External Pressure": "General external pressures driving the organization to implement the new program, including societal advocacy, market competition, or mandated performance metrics.",
-                    "Tension for Change": "The degree to which stakeholders within the organization believe the current situation is intolerable and desperately needs to change.",
-                    "Compatibility": "The degree to which the new program logically fits with existing workflows, legacy software systems, and established clinical processes.",
-                    "Capability": "The degree to which an individual staff member possesses the required competence, knowledge, and technical skills to fulfill their designated role.",
-                    "Motivation": "The degree to which an individual staff member is personally committed to, and enthusiastic about, fulfilling their specific implementation role.",
-                    "Teaming": "Intentionally joining together and collaborating across departmental boundaries to execute interdependent implementation tasks.",
-                    "Engaging": "Systematically attracting and encouraging active participation from those who will be delivering or receiving the new program."
+                    "Innovation Adaptability": "The degree to which the intervention can be tailored.",
+                    "Innovation Complexity": "The degree to which the program is complicated.",
+                    "Capability": "Staff competence and knowledge."
                 },
 
                 ericMapping: {
-                    "Innovation Adaptability": [
-                        { text: "Promote adaptability of the intervention", cluster: "Adapt and Tailor to Context", consensus: 78 },
-                        { text: "Tailor strategies", cluster: "Adapt and Tailor to Context", consensus: 65 }
-                    ],
-                    "Innovation Complexity": [
-                        { text: "Develop educational materials", cluster: "Train and Educate Stakeholders", consensus: 82 },
-                        { text: "Conduct local consensus discussions", cluster: "Engage Consumers", consensus: 60 }
-                    ],
                     "Capability": [
-                        { text: "Conduct localized educational meetings", cluster: "Train and Educate Stakeholders", consensus: 85 },
-                        { text: "Make training dynamic and interactive", cluster: "Train and Educate Stakeholders", consensus: 62 },
+                        { text: "Conduct localized educational meetings", cluster: "Train Stakeholders", consensus: 85 },
                         { text: "Provide clinical supervision", cluster: "Support Clinicians", consensus: 70 }
                     ],
-                    "Compatibility": [
-                        { text: "Assess for readiness and identify barriers", cluster: "Evaluative and Iterative Strategies", consensus: 88 },
-                        { text: "Change physical structure and equipment", cluster: "Change Infrastructure", consensus: 55 }
-                    ],
                     "Available Resources": [
-                        { text: "Access new external funding streams", cluster: "Utilize Financial Strategies", consensus: 81 },
-                        { text: "Alter incentive/allowance structures", cluster: "Utilize Financial Strategies", consensus: 74 }
-                    ],
-                    "Teaming": [
-                        { text: "Identify and prepare champions", cluster: "Develop Stakeholder Interrelationships", consensus: 90 },
-                        { text: "Build a coalition", cluster: "Develop Stakeholder Interrelationships", consensus: 84 }
+                        { text: "Access new external funding streams", cluster: "Financial Strategies", consensus: 81 }
                     ]
                 },
 
                 init() {
-                    const saved = localStorage.getItem('impsci-nav-sl-demo-v1');
+                    const saved = localStorage.getItem('impsci-nav-v1');
                     if (saved) {
                         try {
                             const d = JSON.parse(saved);
-                            this.project = d.project || { innovation: '', setting: '', initialized: false };
-                            this.items = d.items || [];
+                            this.project = d.project || this.project;
+                            this.items = d.items || this.items;
                             this.selectedStrategies = d.selectedStrategies || [];
                         } catch(e) {}
                     }
                     setTimeout(() => this.renderMatrix(), 100);
-                    this.$watch('items', () => { this.save(); this.renderMatrix(); });
+                    
+                    this.$watch('items', (val) => { 
+                        this.save(); 
+                        // Only re-render if we aren't currently dragging to avoid element recreation
+                        if (!window._isDragging) this.renderMatrix(); 
+                    });
                     this.$watch('selectedStrategies', () => this.save());
                     this.$watch('project', () => this.save(), { deep: true });
                     
-                    let resizeTimer;
-                    window.addEventListener('resize', () => {
-                        clearTimeout(resizeTimer); resizeTimer = setTimeout(() => this.renderMatrix(), 150);
-                    });
+                    window.addEventListener('resize', () => this.renderMatrix());
                     this.$watch('leftOpen', () => setTimeout(() => this.renderMatrix(), 450));
                     this.$watch('rightOpen', () => setTimeout(() => this.renderMatrix(), 450));
                 },
 
                 initializeProject() { this.project.initialized = true; this.save(); },
-                save() { localStorage.setItem('impsci-nav-sl-demo-v1', JSON.stringify({ project: this.project, items: this.items, selectedStrategies: this.selectedStrategies })); },
+                save() { localStorage.setItem('impsci-nav-v1', JSON.stringify({ project: this.project, items: this.items, selectedStrategies: this.selectedStrategies })); },
 
                 addItem() {
-                    const id = Date.now();
                     this.items.push({ 
-                        ...JSON.parse(JSON.stringify(this.newItem)), id,
+                        ...JSON.parse(JSON.stringify(this.newItem)), id: Date.now(),
                         rating: parseInt(this.newItem.rating), impact: parseInt(this.newItem.impact),
                         feasibility: parseInt(this.newItem.feasibility), frequency: parseInt(this.newItem.frequency), duration: parseInt(this.newItem.duration),
                     });
                     this.notify("Determinant documented");
                     this.newItem.desc = ''; this.newItem.construct = '';
-                    this.newItem.rating = 50; this.newItem.impact = 5; this.newItem.feasibility = 5; this.newItem.frequency = 3; this.newItem.duration = 3;
                 },
 
-                removeItem(idx) { this.items.splice(idx, 1); this.notify("Determinant removed"); },
+                removeItem(idx) { this.items.splice(idx, 1); },
 
                 resetData() { 
-                    if(confirm("Clear entire project workspace? This cannot be undone.")) { 
-                        this.items = []; this.selectedStrategies = []; this.project = { innovation: '', setting: '', initialized: false };
-                        localStorage.removeItem('impsci-nav-sl-demo-v1'); this.notify("Session reset");
+                    if(confirm("Clear workspace?")) { 
+                        this.items = []; this.selectedStrategies = []; this.project.initialized = false;
+                        localStorage.removeItem('impsci-nav-v1'); 
                     }
                 },
 
@@ -708,7 +605,7 @@
                 commitStrategy() {
                     this.selectedStrategies.push(JSON.parse(JSON.stringify(this.strategyModal)));
                     this.strategyModal.open = false;
-                    this.notify("Strategy mapped to IRLM");
+                    this.notify("Strategy mapped");
                 },
 
                 removeStrategy(idx) { this.selectedStrategies.splice(idx, 1); },
@@ -738,16 +635,12 @@
                 },
 
                 get suggestedStrategies() {
-                    // Match rules: barrier (rating <=49), impact > 5
                     const priorityConstructs = [...new Set(this.items.filter(i => i.rating <= 49 && i.impact > 5).map(i => i.construct))];
                     let res = [];
                     priorityConstructs.forEach(c => { if(this.ericMapping[c]) res = [...res, ...this.ericMapping[c]]; });
-                    
-                    // Deduplicate and filter out already fully selected ones (by text)
                     const selectedTexts = this.selectedStrategies.map(s => s.strat.text);
                     const uniqueRes = Array.from(new Set(res.map(s => s.text))).map(text => res.find(s => s.text === text));
-                    
-                    return uniqueRes.filter(s => !selectedTexts.includes(s.text)).sort((a,b) => b.consensus - a.consensus).slice(0, 8);
+                    return uniqueRes.filter(s => !selectedTexts.includes(s.text)).sort((a,b) => b.consensus - a.consensus);
                 },
 
                 renderMatrix() {
@@ -759,22 +652,19 @@
                     if(width === 0 || height === 0) return;
 
                     const margin = 64; 
-                    const svg = d3.select("#matrix").append("svg").attr("id", "matrix-svg").attr("width", "100%").attr("height", "100%")
-                                  .style("position", "absolute").style("top", "0").style("left", "0");
+                    const svg = d3.select("#matrix").append("svg").attr("id", "matrix-svg").attr("width", "100%").attr("height", "100%").style("position", "absolute");
 
-                    // Map 1-10 scores to the graph axes
                     const x = d3.scaleLinear().domain([0, 10]).range([margin, width - margin]);
                     const y = d3.scaleLinear().domain([0, 10]).range([height - margin, margin]);
-                    
-                    // Size = Frequency (1-5), Opacity = Duration (1-5)
                     const radiusScale = d3.scaleLinear().domain([1, 5]).range([12, 32]);
                     const opacityScale = d3.scaleLinear().domain([1, 5]).range([0.4, 1]);
 
-                    svg.append("line").attr("x1", x(5)).attr("y1", margin).attr("x2", x(5)).attr("y2", height - margin).attr("stroke", "#cbd5e1").attr("stroke-width", 2).attr("stroke-dasharray", "6,6");
-                    svg.append("line").attr("x1", margin).attr("y1", y(5)).attr("x2", width - margin).attr("y2", y(5)).attr("stroke", "#cbd5e1").attr("stroke-width", 2).attr("stroke-dasharray", "6,6");
+                    // Axis lines
+                    svg.append("line").attr("x1", x(5)).attr("y1", margin).attr("x2", x(5)).attr("y2", height - margin).attr("stroke", "#cbd5e1").attr("stroke-dasharray", "6,6");
+                    svg.append("line").attr("x1", margin).attr("y1", y(5)).attr("x2", width - margin).attr("y2", y(5)).attr("stroke", "#cbd5e1").attr("stroke-dasharray", "6,6");
 
-                    // DATA OPTIMIZATION: Sort by frequency (descending) so smaller nodes draw ON TOP of larger ones, preventing occlusion
                     const renderData = [...this.items].sort((a, b) => b.frequency - a.frequency);
+                    const self = this;
 
                     const node = svg.selectAll(".node").data(renderData, d => d.id).enter().append("g")
                         .attr("class", "node cursor-move")
@@ -782,58 +672,69 @@
                         .attr("id", d => `node-${d.id}`)
                         .style("opacity", d => opacityScale(d.duration))
                         .call(d3.drag()
-                            .on("start", function() { tooltip.style("opacity", 0); d3.select(this).raise(); d3.select(this).select("circle").attr("stroke-width", 5); })
-                            .on("drag", (event, d) => {
-                                d.impact = Math.max(0, Math.min(10, x.invert(event.x)));
-                                d.feasibility = Math.max(0, Math.min(10, y.invert(event.y)));
-                                d3.select(`#node-${d.id}`).attr("transform", `translate(${x(d.impact)},${y(d.feasibility)})`);
+                            .on("start", function() { 
+                                window._isDragging = true;
+                                tooltip.style("opacity", 0); 
+                                d3.select(this).raise(); 
+                                d3.select(this).select("circle").attr("stroke-width", 5); 
+                            })
+                            .on("drag", function(event, d) {
+                                // Calculate new domain values but don't sync to Alpine yet to avoid watcher trigger
+                                const newImpact = Math.max(0, Math.min(10, x.invert(event.x)));
+                                const newFeas = Math.max(0, Math.min(10, y.invert(event.y)));
                                 
-                                // Live update label positioning while dragging to prevent edge clipping
-                                const thisNode = d3.select(`#node-${d.id}`);
-                                const xPos = x(d.impact); const yPos = y(d.feasibility);
-                                thisNode.select("text")
+                                // Visual update of the node
+                                const xPos = x(newImpact);
+                                const yPos = y(newFeas);
+                                d3.select(this).attr("transform", `translate(${xPos},${yPos})`);
+                                
+                                // Dynamic Label positioning during drag
+                                d3.select(this).select("text")
                                     .attr("y", yPos > height - margin - 30 ? -(radiusScale(d.frequency) + 8) : radiusScale(d.frequency) + 16)
                                     .attr("x", xPos < margin + 30 ? radiusScale(d.frequency) + 4 : (xPos > width - margin - 30 ? -(radiusScale(d.frequency) + 4) : 0))
                                     .attr("text-anchor", xPos < margin + 30 ? "start" : (xPos > width - margin - 30 ? "end" : "middle"));
                             })
-                            .on("end", function() { d3.select(this).select("circle").attr("stroke-width", 3); Alpine.raw(this).__x.$data.save(); })
+                            .on("end", function(event, d) {
+                                // Finalize the data update which will trigger Alpine watcher
+                                d.impact = Math.max(0, Math.min(10, x.invert(event.x)));
+                                d.feasibility = Math.max(0, Math.min(10, y.invert(event.y)));
+                                
+                                d3.select(this).select("circle").attr("stroke-width", 3);
+                                window._isDragging = false;
+                                
+                                // Trigger Alpine sync
+                                self.save();
+                                self.notify("Matrix updated");
+                            })
                         )
                         .on("mouseover", (event, d) => {
-                            this.highlightNode(d.id);
+                            if (window._isDragging) return;
+                            self.highlightNode(d.id);
                             tooltip.style("opacity", 1).style("display", "block").html(`
-                                <div class="space-y-3">
-                                    <div class="flex items-center gap-2 border-b border-slate-700 pb-2">
-                                        <div class="w-2.5 h-2.5 rounded-full ring-2 ring-white/20" style="background: ${this.getRatingColor(d.rating)}"></div>
-                                        <p class="text-[10px] font-bold uppercase text-brand-400 tracking-widest leading-none">${d.construct}</p>
-                                    </div>
+                                <div class="space-y-2">
+                                    <p class="text-[10px] font-bold uppercase text-brand-400 tracking-widest">${d.construct}</p>
                                     <p class="text-sm font-medium leading-snug text-slate-100">${d.desc}</p>
-                                    <div class="flex flex-col gap-1 pt-2 border-t border-slate-700 text-[11px] font-medium">
-                                        <div class="flex justify-between"><span class="text-slate-400">Class</span><span style="color: ${this.getRatingColor(d.rating)}">${this.formatRating(d.rating)}</span></div>
-                                        <div class="flex justify-between"><span class="text-slate-400">Impact (X)</span><span class="text-white">${d.impact.toFixed(1)}/10</span></div>
-                                        <div class="flex justify-between"><span class="text-slate-400">Feas (Y)</span><span class="text-white">${d.feasibility.toFixed(1)}/10</span></div>
-                                        <div class="flex justify-between"><span class="text-slate-400">Freq (Size)</span><span class="text-white">${d.frequency}/5</span></div>
-                                        <div class="flex justify-between"><span class="text-slate-400">Dur (Opacity)</span><span class="text-white">${d.duration}/5</span></div>
+                                    <div class="pt-1 text-[11px] border-t border-slate-700">
+                                        <div class="flex justify-between"><span>Impact</span><span class="text-white font-bold">${d.impact.toFixed(1)}</span></div>
+                                        <div class="flex justify-between"><span>Feasibility</span><span class="text-white font-bold">${d.feasibility.toFixed(1)}</span></div>
                                     </div>
                                 </div>
                             `);
                         })
                         .on("mousemove", (event) => {
+                            if (window._isDragging) return;
                             const [mX, mY] = d3.pointer(event, container);
-                            let left = mX + 20; let top = mY - 20;
-                            if (left + 260 > width) left = mX - 280; if (top + 150 > height) top = height - 150; 
-                            tooltip.style("left", left + "px").style("top", top + "px");
+                            tooltip.style("left", (mX + 20) + "px").style("top", (mY - 20) + "px");
                         })
-                        .on("mouseout", () => { this.clearHighlight(); tooltip.style("opacity", 0).style("display", "none"); });
+                        .on("mouseout", () => { self.clearHighlight(); tooltip.style("opacity", 0).style("display", "none"); });
 
                     node.append("circle")
                         .attr("r", d => radiusScale(d.frequency))
-                        .attr("fill", d => this.getRatingColor(d.rating))
+                        .attr("fill", d => self.getRatingColor(d.rating))
                         .attr("stroke", "#ffffff")
                         .attr("stroke-width", 3)
-                        .style("filter", "drop-shadow(0 4px 6px rgba(0,0,0,0.1))")
-                        .style("transition", "stroke-width 0.2s");
+                        .style("filter", "drop-shadow(0 4px 6px rgba(0,0,0,0.1))");
 
-                    // LABEL OPTIMIZATION: Smart positioning, edge detection, and truncation
                     node.append("text")
                         .attr("y", d => {
                             const yPos = y(d.feasibility);
@@ -851,89 +752,30 @@
                             if (xPos > width - margin - 30) return "end";
                             return "middle";
                         })
-                        .style("font-size", "10.5px")
-                        .style("font-family", "Inter, sans-serif")
-                        .style("font-weight", "800")
-                        .style("fill", "#0f172a")
-                        .style("paint-order", "stroke")
-                        .style("stroke", "rgba(255, 255, 255, 0.95)") // Better contrast outline
-                        .style("stroke-width", "5px")
-                        .style("stroke-linecap", "round")
-                        .style("stroke-linejoin", "round")
-                        .style("pointer-events", "none")
-                        .text(d => {
-                            // Smarter truncation (up to 2 words instead of just 1)
-                            const words = d.construct.split(" ");
-                            if (words.length > 2) return words.slice(0, 2).join(" ") + "…";
-                            return d.construct;
-                        });
+                        .style("font-size", "10.5px").style("font-weight", "800").style("fill", "#0f172a")
+                        .style("stroke", "white").style("stroke-width", "4px").style("paint-order", "stroke")
+                        .text(d => d.construct);
                 },
 
-                highlightNode(id) { d3.select(`#node-${id}`).style("opacity", 1); d3.select(`#node-${id} circle`).attr("stroke", "#0ea5e9").attr("stroke-width", 4); },
+                highlightNode(id) { d3.select(`#node-${id}`).style("opacity", 1); d3.select(`#node-${id} circle`).attr("stroke", "#0ea5e9"); },
                 clearHighlight() { 
-                    const opacityScale = d3.scaleLinear().domain([1, 5]).range([0.4, 1]);
-                    d3.selectAll(".node").style("opacity", d => opacityScale(d.duration));
-                    d3.selectAll("circle").attr("stroke", "#ffffff").attr("stroke-width", 3); 
+                    d3.selectAll(".node").style("opacity", d => d3.scaleLinear().domain([1, 5]).range([0.4, 1])(d.duration));
+                    d3.selectAll("circle").attr("stroke", "#ffffff"); 
                 },
 
                 exportPNG() {
-                    const targetElement = document.querySelector('.matrix-bg');
-                    const svgElement = document.getElementById('matrix-svg');
-                    
-                    if (!targetElement || !svgElement) return;
-                    
-                    this.notify("Preparing image export...");
-
-                    // Temporarily lock SVG dimensions to pixels for html2canvas accuracy
-                    const rect = svgElement.getBoundingClientRect();
-                    svgElement.setAttribute('width', rect.width);
-                    svgElement.setAttribute('height', rect.height);
-
-                    window.html2canvas(targetElement, {
-                        scale: 2, // High resolution export
-                        backgroundColor: '#ffffff',
-                        logging: false
-                    }).then(canvas => {
-                        const pngUrl = canvas.toDataURL('image/png');
-                        const downloadLink = document.createElement('a'); 
-                        downloadLink.href = pngUrl; 
-                        downloadLink.download = 'ImpSci-Strategic-Matrix.png';
-                        document.body.appendChild(downloadLink); 
-                        downloadLink.click(); 
-                        document.body.removeChild(downloadLink);
-                        
-                        // Restore flexible percentage dimensions
-                        svgElement.setAttribute('width', '100%');
-                        svgElement.setAttribute('height', '100%');
-                        
-                        this.notify("Matrix successfully exported!");
-                    }).catch(err => {
-                        console.error("Export error: ", err);
-                        this.notify("Error exporting image.");
-                        svgElement.setAttribute('width', '100%');
-                        svgElement.setAttribute('height', '100%');
+                    const target = document.querySelector('.matrix-bg');
+                    window.html2canvas(target).then(canvas => {
+                        const link = document.createElement('a'); link.download = 'Matrix.png';
+                        link.href = canvas.toDataURL(); link.click();
                     });
                 },
 
                 async exportIRLM() {
                     const el = document.getElementById('irlm-figure');
-                    if (!el) return;
-                    this.notify("Preparing high-res logic model export...");
-                    try {
-                        const dataUrl = await htmlToImage.toPng(el, { 
-                            pixelRatio: 3, 
-                            backgroundColor: '#ffffff',
-                            quality: 1
-                        });
-                        const link = document.createElement('a');
-                        link.download = `IRLM_${this.project.innovation || 'Figure'}_${new Date().toLocaleDateString().replace(/\//g, '-')}.png`;
-                        link.href = dataUrl;
-                        link.click();
-                        this.notify("IRLM Figure exported successfully!");
-                    } catch (error) {
-                        console.error("Failed to export logic model", error);
-                        this.notify("Failed to export logic model.");
-                    }
+                    const dataUrl = await htmlToImage.toPng(el);
+                    const link = document.createElement('a'); link.download = 'IRLM.png';
+                    link.href = dataUrl; link.click();
                 }
             }));
         });
