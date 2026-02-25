@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImpSci Navigator | Preparation Phase</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        [x-cloak] { display: none !important; }
+        body { font-family: 'Inter', sans-serif; }
+        .matrix-container { cursor: crosshair; background-image: radial-gradient(#e2e8f0 1px, transparent 1px); background-size: 20px 20px; }
+    </style>
+</head>
+<body class="h-full" x-data="prepPhaseApp" x-init="init()">
+
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-slate-900 tracking-tight">ImpSci Navigator</h1>
+                    <p class="text-[10px] uppercase font-bold text-indigo-500 tracking-widest">Phase 2: Preparation</p>
+                </div>
+            </div>
+            <button @click="resetData()" class="text-xs font-semibold text-slate-400 hover:text-red-500 transition-colors">Reset Session</button>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <section class="lg:col-span-3 space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <h2 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-[10px]">1</span>
+                    Identify Determinants
+                </h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">CFIR Domain</label>
+                        <select x-model="newItem.construct" class="w-full text-xs border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Select Domain...</option>
+                            <template x-for="(list, domain) in cfirMap" :key="domain">
+                                <optgroup :label="domain">
+                                    <template x-for="item in list" :key="item">
+                                        <option :value="item" x-text="item"></option>
+                                    </template>
+                                </optgroup>
+                            </template>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Impact Type</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button @click="newItem.rating = -1" :class="newItem.rating < 0 ? 'bg-red-50 border-red-200 text-red-700' : 'bg-white text-slate-500'" class="py-2 border rounded-lg text-[10px] font-bold transition-all">Barrier</button>
+                            <button @click="newItem.rating = 1" :class="newItem.rating > 0 ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-white text-slate-500'" class="py-2 border rounded-lg text-[10px] font-bold transition-all">Enabler</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Description</label>
+                        <textarea x-model="newItem.desc" placeholder="e.g. Lack of clinical space for private consults" class="w-full text-xs border-slate-200 rounded-lg p-2 h-20 resize-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    </div>
+
+                    <button @click="addItem()" :disabled="!newItem.desc || !newItem.construct" class="w-full bg-indigo-600 text-white py-2 rounded-lg text-xs font-bold hover:bg-indigo-700 disabled:opacity-50 transition-all">
+                        Add to Matrix
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-4 border-b border-slate-50 bg-slate-50/50">
+                    <h3 class="text-[10px] font-bold text-slate-500 uppercase">Logged Factors</h3>
+                </div>
+                <div class="max-h-64 overflow-y-auto divide-y divide-slate-100">
+                    <template x-for="(item, index) in items" :key="item.id">
+                        <div class="p-3 hover:bg-slate-50 transition-colors group">
+                            <div class="flex justify-between items-start mb-1">
+                                <span :class="item.rating < 0 ? 'text-red-600' : 'text-emerald-600'" class="text-[10px] font-bold uppercase" x-text="item.rating < 0 ? 'Barrier' : 'Enabler'"></span>
+                                <button @click="removeItem(index)" class="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all">&times;</button>
+                            </div>
+                            <p class="text-xs font-semibold text-slate-800 leading-tight" x-text="item.desc"></p>
+                            <p class="text-[9px] text-slate-400 mt-1 italic" x-text="item.construct"></p>
+                        </div>
+                    </template>
+                    <div x-show="items.length === 0" class="p-8 text-center text-[10px] text-slate-400 italic">No factors identified yet.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="lg:col-span-6 flex flex-col min-h-[600px]">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex-1 flex flex-col overflow-hidden">
+                <div class="p-4 border-b border-slate-100 flex justify-between items-center">
+                    <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-[10px]">2</span>
+                        Prioritization Matrix
+                    </h2>
+                    <div class="flex gap-4 text-[10px] font-bold">
+                        <span class="flex items-center gap-1 text-red-500"><span class="w-2 h-2 rounded-full bg-red-500"></span> Barrier</span>
+                        <span class="flex items-center gap-1 text-emerald-500"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Enabler</span>
+                    </div>
+                </div>
+                <div id="matrix" class="flex-1 matrix-container relative">
+                    <div class="absolute inset-x-0 bottom-2 text-center text-[9px] font-bold text-slate-400 uppercase tracking-widest">Importance &rarr;</div>
+                    <div class="absolute inset-y-0 left-2 flex items-center [writing-mode:vertical-lr] text-[9px] font-bold text-slate-400 uppercase tracking-widest">&larr; Changeability</div>
+                </div>
+                <div class="p-3 bg-indigo-50 border-t border-indigo-100 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-indigo-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                    <p class="text-[10px] text-indigo-700 font-medium tracking-tight">Drag elements to prioritize. High-priority items (Top Right) drive strategy recommendations.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="lg:col-span-3 space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <h2 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-[10px]">3</span>
+                    Suggested Strategies
+                </h2>
+                
+                <div class="space-y-2">
+                    <template x-for="strat in suggestedStrategies" :key="strat">
+                        <div class="group flex items-center justify-between p-2 rounded-lg bg-indigo-50 border border-indigo-100 hover:border-indigo-300 transition-all cursor-pointer" @click="addStrategy(strat)">
+                            <span class="text-[11px] font-semibold text-indigo-900 pr-2" x-text="strat"></span>
+                            <span class="text-indigo-400 group-hover:text-indigo-600 font-bold">+</span>
+                        </div>
+                    </template>
+                    <div x-show="suggestedStrategies.length === 0" class="text-center py-6 text-[10px] text-slate-400 italic">Add determinants to see ERIC strategy matching.</div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 rounded-xl shadow-xl p-5 text-white">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-4">Implementation Plan</h3>
+                <div class="space-y-3">
+                    <template x-for="(s, idx) in selectedStrategies" :key="idx">
+                        <div class="flex items-center justify-between gap-3 bg-white/5 p-2 rounded border border-white/10 group">
+                            <span class="text-[11px] font-medium leading-tight" x-text="s"></span>
+                            <button @click="removeStrategy(idx)" class="text-white/20 hover:text-red-400">&times;</button>
+                        </div>
+                    </template>
+                    <div x-show="selectedStrategies.length === 0" class="text-[10px] text-white/30 italic text-center py-4">No strategies selected.</div>
+                </div>
+                
+                <button x-show="selectedStrategies.length > 0" @click="window.print()" class="w-full mt-6 bg-white text-slate-900 py-2 rounded-lg text-xs font-black hover:bg-indigo-400 transition-colors uppercase">
+                    Export Prep Report
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('prepPhaseApp', () => ({
+                items: [],
+                selectedStrategies: [],
+                newItem: { id: null, desc: '', construct: '', rating: -1, importance: 50, changeability: 50 },
+                
+                cfirMap: {
+                    "Inner Setting": ["Culture", "Readiness for Implementation", "Available Resources", "Relative Priority"],
+                    "Outer Setting": ["Patient Needs & Resources", "External Policy & Incentives", "Peer Pressure"],
+                    "Individuals": ["Knowledge & Beliefs", "Self-Efficacy", "Individual Identification"]
+                },
+                
+                ericMatching: {
+                    "Culture": ["Identify Champions", "Build a Coalition", "Inform Local Opinion Leaders"],
+                    "Readiness for Implementation": ["Assess Readiness", "Audit and Feedback", "Conduct Local Consensus Discussions"],
+                    "Available Resources": ["Access New Funding", "Change Physical Structure", "Alter Incentive Structures"],
+                    "Knowledge & Beliefs": ["Conduct Educational Meetings", "Distribute Educational Materials", "Educational Outreach Visits"]
+                },
+
+                init() {
+                    const saved = localStorage.getItem('navigator-prep-data');
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        this.items = parsed.items || [];
+                        this.selectedStrategies = parsed.selectedStrategies || [];
+                    }
+                    this.renderMatrix();
+                    this.$watch('items', (val) => {
+                        localStorage.setItem('navigator-prep-data', JSON.stringify({ items: this.items, selectedStrategies: this.selectedStrategies }));
+                    });
+                },
+
+                resetData() {
+                    if(confirm("Clear all data and start over?")) {
+                        this.items = [];
+                        this.selectedStrategies = [];
+                        localStorage.removeItem('navigator-prep-data');
+                        this.renderMatrix();
+                    }
+                },
+
+                addItem() {
+                    this.items.push({ 
+                        ...this.newItem, 
+                        id: Date.now(),
+                        importance: 50 + (Math.random() * 10 - 5), // Slight jitter for overlap
+                        changeability: 50 + (Math.random() * 10 - 5)
+                    });
+                    this.newItem.desc = '';
+                    this.renderMatrix();
+                },
+
+                removeItem(index) {
+                    this.items.splice(index, 1);
+                    this.renderMatrix();
+                },
+
+                addStrategy(s) {
+                    if(!this.selectedStrategies.includes(s)) this.selectedStrategies.push(s);
+                },
+
+                removeStrategy(idx) {
+                    this.selectedStrategies.splice(idx, 1);
+                },
+
+                get suggestedStrategies() {
+                    const topItems = this.items.filter(i => i.importance >= 50);
+                    let strats = [];
+                    topItems.forEach(i => {
+                        if(this.ericMatching[i.construct]) {
+                            strats = [...strats, ...this.ericMatching[i.construct]];
+                        }
+                    });
+                    return [...new Set(strats)].filter(s => !this.selectedStrategies.includes(s));
+                },
+
+                renderMatrix() {
+                    const container = document.getElementById('matrix');
+                    container.innerHTML = '';
+                    
+                    const width = container.clientWidth;
+                    const height = container.clientHeight || 500;
+                    const margin = 30;
+
+                    const svg = d3.select("#matrix").append("svg")
+                        .attr("width", width)
+                        .attr("height", height);
+
+                    const x = d3.scaleLinear().domain([0, 100]).range([margin, width - margin]);
+                    const y = d3.scaleLinear().domain([0, 100]).range([height - margin, margin]);
+
+                    // Quadrant Lines
+                    svg.append("line").attr("x1", x(50)).attr("y1", margin).attr("x2", x(50)).attr("y2", height - margin).attr("stroke", "#e2e8f0").attr("stroke-width", 2);
+                    svg.append("line").attr("x1", margin).attr("y1", y(50)).attr("x2", width - margin).attr("y2", y(50)).attr("stroke", "#e2e8f0").attr("stroke-width", 2);
+
+                    const drag = d3.drag()
+                        .on("drag", (event, d) => {
+                            d.importance = x.invert(event.x);
+                            d.changeability = y.invert(event.y);
+                            d3.select(`#node-${d.id}`).attr("transform", `translate(${event.x},${event.y})`);
+                        })
+                        .on("end", () => {
+                            this.items = [...this.items]; // Trigger Alpine update
+                        });
+
+                    const nodes = svg.selectAll(".node")
+                        .data(this.items)
+                        .enter().append("g")
+                        .attr("id", d => `node-${d.id}`)
+                        .attr("transform", d => `translate(${x(d.importance)},${y(d.changeability)})`)
+                        .attr("class", "cursor-grab")
+                        .call(drag);
+
+                    nodes.append("circle")
+                        .attr("r", 8)
+                        .attr("fill", d => d.rating < 0 ? "#EF4444" : "#10B981")
+                        .attr("stroke", "white")
+                        .attr("stroke-width", 2)
+                        .attr("class", "shadow-sm");
+
+                    nodes.append("text")
+                        .attr("y", 18)
+                        .attr("text-anchor", "middle")
+                        .attr("class", "text-[9px] font-bold fill-slate-700")
+                        .text(d => d.desc.substring(0, 15) + "...");
+                }
+            }));
+        });
+    </script>
+</body>
+</html>
