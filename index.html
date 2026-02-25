@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ImpSci Navigator: Advanced Assessment</title>
+    <title>ImpSci Navigator</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
@@ -351,6 +351,14 @@
                     </div>
                     
                     <div class="flex-1 relative overflow-hidden flex flex-col">
+                        <!-- Explicit Empty State Overlay for Matrix -->
+                        <div x-show="items.length === 0" class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none" x-cloak>
+                            <div class="bg-white/80 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-sm border border-slate-200 text-center">
+                                <p class="text-sm font-bold text-slate-600">Workspace is empty</p>
+                                <p class="text-xs text-slate-500 mt-1">Map determinants on the left to populate the matrix.</p>
+                            </div>
+                        </div>
+
                         <div class="absolute inset-0 pointer-events-none z-0">
                             <!-- Y-Axis -->
                             <div class="absolute left-6 top-1/2 -translate-y-1/2 -rotate-90 transform origin-left text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 whitespace-nowrap flex items-center gap-2">
@@ -467,6 +475,12 @@
             <!-- Left: CFIR -->
             <div>
                 <div class="bg-slate-900 text-white px-3 py-1.5 inline-block mb-6 rounded"><h2 class="text-[11px] font-bold uppercase tracking-widest">1. Contextual Determinants (CFIR 2.0)</h2></div>
+                
+                <!-- Explicit Empty State for IRLM Print Context -->
+                <div x-show="items.length === 0" class="border-2 border-dashed border-slate-200 p-8 text-center rounded-xl bg-slate-50">
+                    <p class="text-sm font-bold text-slate-400">Contextual Determinants will appear here.</p>
+                </div>
+
                 <div class="space-y-6">
                     <template x-for="item in items">
                         <div class="border-l-2 border-slate-200 pl-4 relative">
@@ -488,6 +502,12 @@
             <!-- Right: Strategies & Outcomes -->
             <div>
                 <div class="bg-brand-600 text-white px-3 py-1.5 inline-block mb-6 rounded"><h2 class="text-[11px] font-bold uppercase tracking-widest">2. Strategies (ERIC) & Outcomes (Proctor)</h2></div>
+                
+                <!-- Explicit Empty State for IRLM Print Strategies -->
+                <div x-show="selectedStrategies.length === 0" class="border-2 border-dashed border-slate-200 p-8 text-center rounded-xl bg-slate-50">
+                    <p class="text-sm font-bold text-slate-400">Specified Strategies & Outcomes will appear here.</p>
+                </div>
+
                 <div class="space-y-5">
                     <template x-for="s in selectedStrategies">
                         <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg">
