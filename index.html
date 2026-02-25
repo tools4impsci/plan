@@ -76,7 +76,7 @@
         <div class="bg-white rounded-2xl shadow-float max-w-lg w-full p-8 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-brand-500"></div>
             <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-2">Configure Project</h2>
-            <p class="text-sm text-slate-500 mb-6">Define the "thing" and setting for this implementation effort.</p>
+            <p class="text-sm text-slate-500 mb-6">To ensure contextual accuracy, please define the precise intervention and setting for this implementation effort.</p>
             
             <div class="space-y-5">
                 <div>
@@ -335,8 +335,8 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                             </div>
                             <div>
-                                <h2 class="text-sm font-bold text-slate-900 tracking-tight">Prioritization Matrix</h2>
-                                <p class="text-[11px] text-slate-500 font-medium">Impact vs. Feasibility</p>
+                                <h2 class="text-sm font-bold text-slate-900 tracking-tight">MCDA Prioritization Matrix</h2>
+                                <p class="text-[11px] text-slate-500 font-medium">Impact vs. Feasibility "Go Zones"</p>
                             </div>
                         </div>
                         <div class="flex gap-4">
@@ -682,7 +682,10 @@
                     svg.append("line").attr("x1", x(5)).attr("y1", margin).attr("x2", x(5)).attr("y2", height - margin).attr("stroke", "#cbd5e1").attr("stroke-width", 2).attr("stroke-dasharray", "6,6");
                     svg.append("line").attr("x1", margin).attr("y1", y(5)).attr("x2", width - margin).attr("y2", y(5)).attr("stroke", "#cbd5e1").attr("stroke-width", 2).attr("stroke-dasharray", "6,6");
 
-                    const node = svg.selectAll(".node").data(this.items).enter().append("g")
+                    // DATA OPTIMIZATION: Sort by frequency (descending) so smaller nodes draw ON TOP of larger ones, preventing occlusion
+                    const renderData = [...this.items].sort((a, b) => b.frequency - a.frequency);
+
+                    const node = svg.selectAll(".node").data(renderData, d => d.id).enter().append("g")
                         .attr("class", "node cursor-move")
                         .attr("transform", d => `translate(${x(d.impact)},${y(d.feasibility)})`)
                         .attr("id", d => `node-${d.id}`)
@@ -693,6 +696,14 @@
                                 d.impact = Math.max(0, Math.min(10, x.invert(event.x)));
                                 d.feasibility = Math.max(0, Math.min(10, y.invert(event.y)));
                                 d3.select(`#node-${d.id}`).attr("transform", `translate(${x(d.impact)},${y(d.feasibility)})`);
+                                
+                                // Live update label positioning while dragging to prevent edge clipping
+                                const thisNode = d3.select(`#node-${d.id}`);
+                                const xPos = x(d.impact); const yPos = y(d.feasibility);
+                                thisNode.select("text")
+                                    .attr("y", yPos > height - margin - 30 ? -(radiusScale(d.frequency) + 8) : radiusScale(d.frequency) + 16)
+                                    .attr("x", xPos < margin + 30 ? radiusScale(d.frequency) + 4 : (xPos > width - margin - 30 ? -(radiusScale(d.frequency) + 4) : 0))
+                                    .attr("text-anchor", xPos < margin + 30 ? "start" : (xPos > width - margin - 30 ? "end" : "middle"));
                             })
                             .on("end", function() { d3.select(this).select("circle").attr("stroke-width", 3); Alpine.raw(this).__x.$data.save(); })
                         )
@@ -723,13 +734,48 @@
                         })
                         .on("mouseout", () => { this.clearHighlight(); tooltip.style("opacity", 0).style("display", "none"); });
 
-                    node.append("circle").attr("r", d => radiusScale(d.frequency)).attr("fill", d => this.getRatingColor(d.rating))
-                        .attr("stroke", "#ffffff").attr("stroke-width", 3).style("filter", "drop-shadow(0 4px 6px rgba(0,0,0,0.1))").style("transition", "stroke-width 0.2s");
+                    node.append("circle")
+                        .attr("r", d => radiusScale(d.frequency))
+                        .attr("fill", d => this.getRatingColor(d.rating))
+                        .attr("stroke", "#ffffff")
+                        .attr("stroke-width", 3)
+                        .style("filter", "drop-shadow(0 4px 6px rgba(0,0,0,0.1))")
+                        .style("transition", "stroke-width 0.2s");
 
-                    node.append("text").attr("y", d => radiusScale(d.frequency) + 14).attr("text-anchor", "middle")
-                        .style("font-size", "10px").style("font-family", "Inter, sans-serif").style("font-weight", "800")
-                        .style("fill", "#0f172a").style("paint-order", "stroke").style("stroke", "#ffffff").style("stroke-width", "4px")
-                        .style("pointer-events", "none").text(d => d.construct.split(" ")[0]);
+                    // LABEL OPTIMIZATION: Smart positioning, edge detection, and truncation
+                    node.append("text")
+                        .attr("y", d => {
+                            const yPos = y(d.feasibility);
+                            return yPos > height - margin - 30 ? -(radiusScale(d.frequency) + 8) : radiusScale(d.frequency) + 16;
+                        })
+                        .attr("x", d => {
+                            const xPos = x(d.impact);
+                            if (xPos < margin + 30) return radiusScale(d.frequency) + 4;
+                            if (xPos > width - margin - 30) return -(radiusScale(d.frequency) + 4);
+                            return 0;
+                        })
+                        .attr("text-anchor", d => {
+                            const xPos = x(d.impact);
+                            if (xPos < margin + 30) return "start";
+                            if (xPos > width - margin - 30) return "end";
+                            return "middle";
+                        })
+                        .style("font-size", "10.5px")
+                        .style("font-family", "Inter, sans-serif")
+                        .style("font-weight", "800")
+                        .style("fill", "#0f172a")
+                        .style("paint-order", "stroke")
+                        .style("stroke", "rgba(255, 255, 255, 0.95)") // Better contrast outline
+                        .style("stroke-width", "5px")
+                        .style("stroke-linecap", "round")
+                        .style("stroke-linejoin", "round")
+                        .style("pointer-events", "none")
+                        .text(d => {
+                            // Smarter truncation (up to 2 words instead of just 1)
+                            const words = d.construct.split(" ");
+                            if (words.length > 2) return words.slice(0, 2).join(" ") + "…";
+                            return d.construct;
+                        });
                 },
 
                 highlightNode(id) { d3.select(`#node-${id}`).style("opacity", 1); d3.select(`#node-${id} circle`).attr("stroke", "#0ea5e9").attr("stroke-width", 4); },
