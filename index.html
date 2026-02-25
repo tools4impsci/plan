@@ -386,6 +386,8 @@
                             <p class="text-black font-semibold uppercase text-xs tracking-widest">Innovation: <span class="font-normal" x-text="project.innovation || 'Undefined'"></span></p>
                             <div class="h-4 w-px bg-black"></div>
                             <p class="text-black font-semibold uppercase text-xs tracking-widest">Setting: <span class="font-normal" x-text="project.setting || 'Undefined'"></span></p>
+                            <div class="h-4 w-px bg-black"></div>
+                            <p class="text-black font-semibold uppercase text-xs tracking-widest">Date: <span class="font-normal" x-text="new Date().toLocaleDateString()"></span></p>
                         </div>
                     </div>
 
@@ -407,6 +409,10 @@
                                                         <div>
                                                             <span class="font-bold text-black uppercase text-[10px]" x-text="item.construct"></span>: 
                                                             <span class="text-black" x-text="item.desc"></span>
+                                                            <div class="flex gap-3 mt-1 text-[9px] font-bold text-slate-700 uppercase">
+                                                                <span>Imp: <span x-text="item.impact"></span></span>
+                                                                <span>Feas: <span x-text="item.feasibility"></span></span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </template>
@@ -424,7 +430,7 @@
                                 <template x-for="s in selectedStrategies">
                                     <div class="p-4 bg-white border border-black text-xs relative group">
                                         <p class="font-bold text-black uppercase tracking-tight mb-1" x-text="s.strat.text"></p>
-                                        <p class="text-slate-800 font-semibold text-[10px] uppercase mb-2" x-text="s.strat.cluster"></p>
+                                        <p class="text-slate-800 font-semibold text-[10px] uppercase mb-2 border-b border-slate-300 pb-1 w-fit" x-text="s.strat.cluster"></p>
                                         <p class="text-black text-[10px] italic" x-text="`By: ${s.actor} → To: ${s.target}`"></p>
                                     </div>
                                 </template>
@@ -518,11 +524,26 @@
             Alpine.data('prepApp', () => ({
                 project: { innovation: 'Youth Readiness Intervention (YRI) via Mobile Supervision', setting: 'Secondary Schools in Sierra Leone', initialized: true },
                 items: [
-                    { id: 1, construct: 'Capability', rating: 20, impact: 9, feasibility: 8, frequency: 5, duration: 5, desc: 'Teachers are lay workers with no prior formal training in delivering mental health therapies.' },
-                    { id: 2, construct: 'Available Resources', rating: 15, impact: 10, feasibility: 7, frequency: 5, duration: 5, desc: 'Severe shortage of specialized behavioral health professionals; high travel costs.' },
-                    { id: 3, construct: 'Patient Needs', rating: 95, impact: 10, feasibility: 5, frequency: 5, duration: 5, desc: '98% mental health treatment gap among youth due to compounded adversity.' }
+                    { id: 1, construct: 'Capability', rating: 20, impact: 9, feasibility: 8, frequency: 5, duration: 5, desc: 'Teachers are lay workers with no prior formal training in delivering cognitive behavioral or interpersonal mental health therapies.' },
+                    { id: 2, construct: 'Available Resources', rating: 15, impact: 10, feasibility: 7, frequency: 5, duration: 5, desc: 'Severe shortage of specialized behavioral health professionals; traditional in-person supervision involves prohibitive transportation and time costs.' },
+                    { id: 3, construct: 'Patient Needs', rating: 95, impact: 10, feasibility: 5, frequency: 5, duration: 5, desc: '98% mental health treatment gap among youth due to compounded adversity (civil war, Ebola); high unmet need for emotion regulation skills.' },
+                    { id: 4, construct: 'Compatibility', rating: 75, impact: 7, feasibility: 8, frequency: 4, duration: 4, desc: 'YRI logic fits into the school environment and can be scheduled as a weekly extracurricular activity.' },
+                    { id: 5, construct: 'Innovation Complexity', rating: 35, impact: 8, feasibility: 7, frequency: 5, duration: 4, desc: 'The mobile-based supervision model requires teachers to navigate an mHealth app, posing tech literacy challenges.' }
                 ],
-                selectedStrategies: [],
+                selectedStrategies: [
+                    {
+                        strat: { text: "Conduct localized educational meetings", cluster: "Train Stakeholders", consensus: 85 },
+                        outcome: "Fidelity", actor: "YRI Expert Trainers", target: "Secondary School Teachers", dose: "10-day intensive in-person training", justification: "Builds foundational capability and competency for lay teachers."
+                    },
+                    {
+                        strat: { text: "Provide clinical supervision", cluster: "Support Clinicians", consensus: 70 },
+                        outcome: "Feasibility", actor: "YRI Supervisors", target: "YRI Teacher Facilitators", dose: "Weekly 30-45 min sessions via WhatsApp", justification: "Mobile supervision mitigates resource barriers (travel time and cost)."
+                    },
+                    {
+                        strat: { text: "Develop educational materials", cluster: "Train Stakeholders", consensus: 82 },
+                        outcome: "Acceptability", actor: "DSTI & Program Managers", target: "YRI Teacher Facilitators", dose: "1-day tech training + app manual", justification: "Reduces complexity of the mobile model by training teachers on the app."
+                    }
+                ],
                 newItem: { id: null, desc: '', construct: '', rating: 50, impact: 5, feasibility: 5, frequency: 3, duration: 3 },
                 leftOpen: true, rightOpen: true, notifications: [],
                 strategyModal: { open: false, strat: null, outcome: '', actor: '', target: '', dose: '', justification: '' },
@@ -536,18 +557,41 @@
                 },
                 
                 cfirDefinitions: {
-                    "Innovation Adaptability": "The degree to which the intervention can be tailored.",
-                    "Innovation Complexity": "The degree to which the program is complicated.",
-                    "Capability": "Staff competence and knowledge."
+                    "Innovation Adaptability": "The degree to which the new program, treatment, or tool can be modified, tailored, or refined to fit local community needs and clinical contexts.",
+                    "Innovation Complexity": "The degree to which the new program is complicated, reflected by massive scope or volume of implementation steps.",
+                    "External Pressure": "General external pressures driving the organization to implement the new program.",
+                    "Tension for Change": "Stakeholders believe the current situation is intolerable and desperately needs to change.",
+                    "Compatibility": "The degree to which the new program logically fits with existing workflows and systems.",
+                    "Capability": "Degree to which an individual possesses required knowledge and skills.",
+                    "Motivation": "Degree to which individual is personally committed to implementation.",
+                    "Teaming": "Intentionally joining together across departmental boundaries.",
+                    "Engaging": "Systematically attracting participation from those receiving or delivering the program."
                 },
 
                 ericMapping: {
+                    "Innovation Adaptability": [
+                        { text: "Promote adaptability of the intervention", cluster: "Adapt and Tailor to Context", consensus: 78 },
+                        { text: "Tailor strategies", cluster: "Adapt and Tailor to Context", consensus: 65 }
+                    ],
+                    "Innovation Complexity": [
+                        { text: "Develop educational materials", cluster: "Train Stakeholders", consensus: 82 },
+                        { text: "Conduct local consensus discussions", cluster: "Engage Consumers", consensus: 60 }
+                    ],
                     "Capability": [
                         { text: "Conduct localized educational meetings", cluster: "Train Stakeholders", consensus: 85 },
                         { text: "Provide clinical supervision", cluster: "Support Clinicians", consensus: 70 }
                     ],
+                    "Compatibility": [
+                        { text: "Assess for readiness and identify barriers", cluster: "Evaluative Strategies", consensus: 88 },
+                        { text: "Change physical structure", cluster: "Change Infrastructure", consensus: 55 }
+                    ],
                     "Available Resources": [
-                        { text: "Access new external funding streams", cluster: "Financial Strategies", consensus: 81 }
+                        { text: "Access new external funding streams", cluster: "Financial Strategies", consensus: 81 },
+                        { text: "Alter incentive structures", cluster: "Financial Strategies", consensus: 74 }
+                    ],
+                    "Teaming": [
+                        { text: "Identify and prepare champions", cluster: "Stakeholder Interrelationships", consensus: 90 },
+                        { text: "Build a coalition", cluster: "Stakeholder Interrelationships", consensus: 84 }
                     ]
                 },
 
@@ -558,14 +602,13 @@
                             const d = JSON.parse(saved);
                             this.project = d.project || this.project;
                             this.items = d.items || this.items;
-                            this.selectedStrategies = d.selectedStrategies || [];
+                            this.selectedStrategies = d.selectedStrategies || this.selectedStrategies;
                         } catch(e) {}
                     }
                     setTimeout(() => this.renderMatrix(), 100);
                     
                     this.$watch('items', (val) => { 
                         this.save(); 
-                        // Only re-render if we aren't currently dragging to avoid element recreation
                         if (!window._isDragging) this.renderMatrix(); 
                     });
                     this.$watch('selectedStrategies', () => this.save());
@@ -595,6 +638,7 @@
                     if(confirm("Clear workspace?")) { 
                         this.items = []; this.selectedStrategies = []; this.project.initialized = false;
                         localStorage.removeItem('impsci-nav-v1'); 
+                        location.reload();
                     }
                 },
 
@@ -640,7 +684,7 @@
                     priorityConstructs.forEach(c => { if(this.ericMapping[c]) res = [...res, ...this.ericMapping[c]]; });
                     const selectedTexts = this.selectedStrategies.map(s => s.strat.text);
                     const uniqueRes = Array.from(new Set(res.map(s => s.text))).map(text => res.find(s => s.text === text));
-                    return uniqueRes.filter(s => !selectedTexts.includes(s.text)).sort((a,b) => b.consensus - a.consensus);
+                    return uniqueRes.filter(s => !selectedTexts.includes(s.text)).sort((a,b) => b.consensus - a.consensus).slice(0, 8);
                 },
 
                 renderMatrix() {
@@ -679,30 +723,25 @@
                                 d3.select(this).select("circle").attr("stroke-width", 5); 
                             })
                             .on("drag", function(event, d) {
-                                // Calculate new domain values but don't sync to Alpine yet to avoid watcher trigger
                                 const newImpact = Math.max(0, Math.min(10, x.invert(event.x)));
                                 const newFeas = Math.max(0, Math.min(10, y.invert(event.y)));
                                 
-                                // Visual update of the node
                                 const xPos = x(newImpact);
                                 const yPos = y(newFeas);
                                 d3.select(this).attr("transform", `translate(${xPos},${yPos})`);
                                 
-                                // Dynamic Label positioning during drag
                                 d3.select(this).select("text")
                                     .attr("y", yPos > height - margin - 30 ? -(radiusScale(d.frequency) + 8) : radiusScale(d.frequency) + 16)
                                     .attr("x", xPos < margin + 30 ? radiusScale(d.frequency) + 4 : (xPos > width - margin - 30 ? -(radiusScale(d.frequency) + 4) : 0))
                                     .attr("text-anchor", xPos < margin + 30 ? "start" : (xPos > width - margin - 30 ? "end" : "middle"));
                             })
                             .on("end", function(event, d) {
-                                // Finalize the data update which will trigger Alpine watcher
                                 d.impact = Math.max(0, Math.min(10, x.invert(event.x)));
                                 d.feasibility = Math.max(0, Math.min(10, y.invert(event.y)));
                                 
                                 d3.select(this).select("circle").attr("stroke-width", 3);
                                 window._isDragging = false;
                                 
-                                // Trigger Alpine sync
                                 self.save();
                                 self.notify("Matrix updated");
                             })
