@@ -44,7 +44,7 @@ This application is built as a lightweight, client-side-only web app using the f
 
 ## ❓ Frequently Asked Questions (FAQ)
 
-### 1. How does the MCDA Prioritization Matrix work?
+### How does the MCDA Prioritization Matrix work?
 The matrix uses Multi-Criteria Decision Analysis to help you figure out which barriers to tackle first.
 
 * **X-Axis (Importance/Impact):** How severely does this determinant affect implementation?
@@ -53,17 +53,17 @@ The matrix uses Multi-Criteria Decision Analysis to help you figure out which ba
 * **Node Size:** Represents the *Frequency* of the determinant.
 * **Node Opacity:** Represents the *Duration* or persistence of the determinant.
 
-### 2. How does the Strategy Engine know what to suggest?
+### How does the Strategy Engine know what to suggest?
 The Strategy Engine uses published matching algorithms (specifically, the CFIR-ERIC matching project). When you log a barrier (Valence < 50) that has a high impact (> 5), the engine looks up which ERIC strategies implementation experts have agreed are most effective at overcoming that specific CFIR construct.
 
-### 3. What is an IRLM and why do I need one?
+### What is an IRLM and why do I need one?
 An Implementation Research Logic Model (IRLM), pioneered by J.D. Smith and colleagues, is a standardized visual format that clearly displays the relationships between your implementation context, the strategies you are using, the mechanisms they trigger, and the ultimate implementation outcomes. It is highly recommended by funders (like the NIH) for implementation science grant proposals.
 
-### 4. Where is my data saved? Can others see it?
+### Where is my data saved? Can others see it?
 Your data is saved securely in your own browser using `localStorage`. It is **not** sent to any external server or database. If you clear your browser cache, the data will be lost. To share your work, use the "Export Matrix" or "Export IRLM" buttons.
 
-### 5. Can I use this for my own project instead of the Sierra Leone example?
+### Can I use this for my own project instead of the Sierra Leone example?
 Yes! Click the **Red "Reset Session" Button** (the circular arrow icon) in the top right corner. This will clear the pre-loaded Sierra Leone YRI data and allow you to define your own Innovation and Setting from a blank slate.
 
-### 6. Why won't my IRLM export properly?
+### Why won't my IRLM export properly?
 The IRLM export relies on converting HTML to an image canvas. If you are using a very strict browser (like Safari with aggressive privacy protections) or have heavily zoomed in/out, the rendering engine might struggle. Ensure your browser is at 100% zoom and try again. The app includes a built-in fallback engine if the primary high-resolution export fails.
